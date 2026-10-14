@@ -1,0 +1,33 @@
+{
+  "level": "ads",
+  "title": "Ad",
+  "unit": "ads",
+  "nameW": 325,
+  "total": 8,
+  "plainNames": true,
+  "columns": [
+    { "key": "active",    "type": "delivery", "label": "Delivery",                 "w": 127 },
+    { "key": "spent",     "type": "money",  "label": "Amount<br>spent",            "w": 131, "totalLabel": "Total Spent" },
+    { "key": "lpv",       "type": "number", "label": "Landing page<br>views",      "w": 135, "totalLabel": "Total" },
+    { "key": "tickets",   "type": "number", "label": "Masterclass<br>tickets",     "w": 131, "totalLabel": "Total" },
+    { "key": "cpt",       "type": "money",  "label": "Cost per<br>ticket",         "w": 131, "totalLabel": "Per Action" }
+  ],
+  "rows": [
+    { "id": 201, "campaignId": 1, "adsetId": 101, "active": true,  "thumb": "thumbs/ad-1.webp",
+      "name": "Reel · breathing demo",      "spent": 19800, "lpv": 1320, "tickets": 162, "cpt": 122 },
+    { "id": 202, "campaignId": 1, "adsetId": 102, "active": true,  "thumb": "thumbs/ad-2.webp",
+      "name": "Reel · student story",       "spent": 14600, "lpv": 880,  "tickets": 106, "cpt": 138 },
+    { "id": 203, "campaignId": 1, "adsetId": 101, "active": false, "thumb": "thumbs/ad-3.webp",
+      "name": "Static · poster",            "spent": 4900,  "lpv": 230,  "tickets": 21,  "cpt": 233 },
+    { "id": 204, "campaignId": 1, "adsetId": 102, "active": false, "thumb": "thumbs/ad-4.webp",
+      "name": "Carousel · 5 signs",         "spent": 2700,  "lpv": 170,  "tickets": 11,  "cpt": 245 },
+    { "id": 205, "campaignId": 2, "adsetId": 103, "active": true,  "thumb": "thumbs/ad-5.webp",
+      "name": "Reel · replay + bonus",      "spent": 2500,  "lpv": 410,  "tickets": null, "cpt": null },
+    { "id": 206, "campaignId": 2, "adsetId": 103, "active": true,  "thumb": "thumbs/ad-6.webp",
+      "name": "Carousel · student results", "spent": 1500,  "lpv": 260,  "tickets": null, "cpt": null },
+    { "id": 207, "campaignId": 2, "adsetId": 104, "active": true,  "thumb": "thumbs/ad-7.webp",
+      "name": "Reel · Q&A clip",            "spent": 2000,  "lpv": 300,  "tickets": null, "cpt": null },
+    { "id": 208, "campaignId": 3, "adsetId": 105, "active": true,  "thumb": "thumbs/ad-8.webp",
+      "name": "Static · last 48 hours",     "spent": 3200,  "lpv": 240,  "tickets": null, "cpt": null }
+  ]
+}

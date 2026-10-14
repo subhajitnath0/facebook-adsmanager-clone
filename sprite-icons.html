@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sprite Icon Sheet</title>
+<style>
+  :root{--ink:#1c2b33;--muted:#65676b;--line:#dadde1;--blue:#0b66c3}
+  body{margin:0;font-family:"Segoe UI",Helvetica,Arial,sans-serif;background:#f0f2f5;color:var(--ink)}
+  header{padding:20px 24px 8px} h1{margin:0 0 4px;font-size:22px} p{margin:4px 0;color:var(--muted);font-size:14px;max-width:820px;line-height:1.5}
+  code{background:#fff;border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:13px}
+  .tools{display:flex;gap:10px;align-items:center;padding:8px 24px 0;flex-wrap:wrap}
+  input{height:34px;padding:0 10px;border:1px solid var(--line);border-radius:6px;font-size:14px;width:240px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:16px 24px 40px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font:inherit;color:inherit}
+  .card:hover{border-color:var(--blue)} .card b{font-size:12px;font-weight:600} .card small{font-size:11px;color:var(--muted)}
+  .well{height:56px;display:grid;place-items:center}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 14px;border-radius:6px;font-size:13px;opacity:0;transition:.2s}
+  .toast.on{opacity:1}
+  .sp{--s:20;--k:calc(var(--s) / var(--m));
+      display:inline-block;flex-shrink:0;vertical-align:middle;
+      width:calc(var(--w) * var(--k) * 1px);height:calc(var(--h) * var(--k) * 1px);
+      background-image:url("icon-sprite.webp");background-repeat:no-repeat;
+      background-size:calc(285px * var(--k)) calc(902px * var(--k));
+      background-position:calc(var(--x) * var(--k) * -1px) calc(var(--y) * var(--k) * -1px)}
+  .sp.s12{--s:12}.sp.s14{--s:14}.sp.s16{--s:16}.sp.s18{--s:18}.sp.s22{--s:22}
+  .sp.s24{--s:24}.sp.s26{--s:26}.sp.s28{--s:28}.sp.s32{--s:32}.sp.s40{--s:40}
+  .sp.light{filter:invert(1) brightness(1.6)}               /* black icon -> white, for dark backgrounds */
+  .rail-btn.active .sp{filter:invert(27%) sepia(92%) saturate(1900%) hue-rotate(201deg) brightness(.9)} /* black -> blue */
+  .btn:disabled .sp{opacity:.3}
+.sp-flower-lg{--x:1;--y:805;--w:27;--h:27;--m:27}
+.sp-ring-lg{--x:29;--y:806;--w:28;--h:27;--m:28}
+.sp-flower{--x:59;--y:807;--w:23;--h:21;--m:23}
+.sp-ring{--x:83;--y:807;--w:24;--h:22;--m:24}
+.sp-arrow-left{--x:110;--y:812;--w:16;--h:9;--m:16}
+.sp-arrow-right{--x:131;--y:812;--w:16;--h:9;--m:16}
+.sp-close{--x:152;--y:810;--w:16;--h:13;--m:16}
+.sp-flower-sm{--x:171;--y:805;--w:19;--h:20;--m:20}
+.sp-ring-sm{--x:190;--y:805;--w:21;--h:20;--m:21}
+.sp-monitor{--x:211;--y:805;--w:18;--h:16;--m:18}
+.sp-facebook{--x:230;--y:805;--w:16;--h:16;--m:16}
+.sp-facebook-alt{--x:247;--y:805;--w:16;--h:16;--m:16}
+.sp-instagram{--x:264;--y:805;--w:16;--h:16;--m:16}
+.sp-messenger{--x:0;--y:834;--w:16;--h:16;--m:16}
+.sp-whatsapp{--x:17;--y:834;--w:16;--h:16;--m:16}
+.sp-bookmark{--x:54;--y:834;--w:10;--h:16;--m:16}
+.sp-browser{--x:68;--y:834;--w:16;--h:16;--m:16}
+.sp-brush{--x:85;--y:834;--w:16;--h:16;--m:16}
+.sp-store-star{--x:102;--y:834;--w:16;--h:16;--m:16}
+.sp-table{--x:119;--y:834;--w:16;--h:16;--m:16}
+.sp-card{--x:136;--y:836;--w:16;--h:12;--m:16}
+.sp-warn-grey{--x:153;--y:834;--w:16;--h:14;--m:16}
+.sp-warn-yellow{--x:170;--y:834;--w:16;--h:14;--m:16}
+.sp-warn-red{--x:204;--y:834;--w:16;--h:14;--m:16}
+.sp-chevron{--x:241;--y:839;--w:10;--h:6;--m:10}
+.sp-coins{--x:255;--y:834;--w:16;--h:16;--m:16}
+.sp-chat{--x:1;--y:852;--w:14;--h:15;--m:15}
+.sp-chat-alt{--x:18;--y:852;--w:14;--h:17;--m:17}
+.sp-id-card{--x:34;--y:853;--w:16;--h:16;--m:16}
+.sp-cursor{--x:52;--y:851;--w:13;--h:18;--m:18}
+.sp-mail{--x:68;--y:854;--w:16;--h:10;--m:16}
+.sp-eye{--x:85;--y:854;--w:16;--h:10;--m:16}
+.sp-rss{--x:103;--y:852;--w:14;--h:17;--m:17}
+.sp-film{--x:119;--y:851;--w:16;--h:18;--m:18}
+.sp-heart{--x:153;--y:852;--w:16;--h:17;--m:17}
+.sp-like{--x:187;--y:851;--w:16;--h:16;--m:16}
+.sp-link{--x:204;--y:851;--w:16;--h:16;--m:16}
+.sp-search{--x:221;--y:851;--w:16;--h:18;--m:18}
+.sp-search-alt{--x:238;--y:851;--w:16;--h:18;--m:18}
+.sp-medal{--x:257;--y:851;--w:12;--h:18;--m:18}
+.sp-chats{--x:0;--y:869;--w:16;--h:15;--m:16}
+.sp-login{--x:18;--y:868;--w:13;--h:16;--m:16}
+.sp-phone-download{--x:37;--y:868;--w:11;--h:16;--m:16}
+.sp-docs{--x:51;--y:868;--w:16;--h:16;--m:16}
+.sp-ticket{--x:68;--y:869;--w:16;--h:14;--m:16}
+.sp-pencil-check{--x:85;--y:870;--w:16;--h:13;--m:16}
+.sp-pencil{--x:103;--y:868;--w:15;--h:15;--m:15}
+.sp-phone{--x:119;--y:868;--w:16;--h:16;--m:16}
+.sp-location{--x:136;--y:868;--w:16;--h:16;--m:16}
+.sp-help{--x:153;--y:868;--w:16;--h:16;--m:16}
+.sp-clock{--x:170;--y:868;--w:16;--h:16;--m:16}
+.sp-refresh{--x:188;--y:869;--w:14;--h:15;--m:15}
+.sp-open-external{--x:205;--y:869;--w:14;--h:14;--m:14}
+.sp-share{--x:221;--y:868;--w:16;--h:16;--m:16}
+.sp-bag-add{--x:239;--y:868;--w:15;--h:16;--m:16}
+.sp-basket{--x:255;--y:868;--w:16;--h:16;--m:16}
+.sp-cart{--x:1;--y:886;--w:14;--h:14;--m:14}
+.sp-handshake{--x:17;--y:887;--w:16;--h:13;--m:16}
+.sp-handshake-light{--x:34;--y:887;--w:16;--h:13;--m:16}
+.sp-star-circle{--x:51;--y:885;--w:16;--h:16;--m:16}
+.sp-tag{--x:85;--y:885;--w:16;--h:16;--m:16}
+.sp-caret-dark{--x:105;--y:890;--w:10;--h:6;--m:10}
+.sp-caret-light{--x:122;--y:890;--w:10;--h:6;--m:10}
+.sp-caret{--x:139;--y:890;--w:10;--h:6;--m:10}
+.sp-trophy{--x:170;--y:886;--w:16;--h:15;--m:16}
+.sp-shopping-bag{--x:187;--y:885;--w:16;--h:16;--m:16}
+.sp-flower-xs{--x:204;--y:885;--w:15;--h:16;--m:16}
+.sp-ring-xs{--x:219;--y:885;--w:18;--h:16;--m:18}
+.sp-house-card{--x:0;--y:360;--w:80;--h:82;--m:82}
+.sp-wallet-card{--x:81;--y:368;--w:66;--h:77;--m:77}
+.sp-megaphone-circle{--x:146;--y:368;--w:61;--h:57;--m:61}
+.sp-gamepad-circle{--x:183;--y:449;--w:62;--h:59;--m:62}
+.sp-megaphone-teal{--x:244;--y:449;--w:40;--h:39;--m:40}
+.sp-coins-gold{--x:244;--y:488;--w:40;--h:42;--m:42}
+.sp-cube-circle{--x:0;--y:508;--w:60;--h:60;--m:60}
+.sp-calendar-circle{--x:61;--y:508;--w:60;--h:60;--m:60}
+.sp-filter-circle{--x:122;--y:508;--w:60;--h:60;--m:60}
+.sp-chat-circle{--x:183;--y:508;--w:60;--h:60;--m:60}
+.sp-megaphone-blue{--x:244;--y:531;--w:40;--h:39;--m:40}
+.sp-store-circle{--x:0;--y:569;--w:60;--h:60;--m:60}
+.sp-like-circle{--x:61;--y:569;--w:60;--h:60;--m:60}
+.sp-comments-circle{--x:122;--y:569;--w:60;--h:60;--m:60}
+.sp-people-circle{--x:183;--y:569;--w:60;--h:60;--m:60}
+.sp-coin-blue{--x:244;--y:570;--w:40;--h:42;--m:42}
+.sp-cart-circle{--x:0;--y:631;--w:60;--h:60;--m:60}
+.sp-hub-circle{--x:61;--y:631;--w:60;--h:60;--m:60}
+.sp-atom-circle{--x:122;--y:631;--w:60;--h:60;--m:60}
+.sp-shop-person-circle{--x:183;--y:631;--w:60;--h:60;--m:60}
+.sp-card-blue{--x:244;--y:613;--w:40;--h:39;--m:40}
+.sp-flower-xl{--x:245;--y:652;--w:33;--h:35;--m:35}
+.sp-video-circle{--x:0;--y:692;--w:60;--h:60;--m:60}
+.sp-cursor-circle{--x:61;--y:692;--w:60;--h:60;--m:60}
+.sp-globe-circle{--x:122;--y:692;--w:60;--h:60;--m:60}
+.sp-home-blue{--x:202;--y:754;--w:40;--h:40;--m:40}
+.sp-briefcase-blue{--x:243;--y:754;--w:40;--h:40;--m:40}
+</style>
+</head>
+<body>
+<header>
+  <h1>Sprite icon sheet</h1>
+  <p>Every icon below is cut out of <code>icon-sprite.webp</code> with CSS only — no image editing. Click any card to copy its HTML tag.</p>
+  <p>Use: <code>&lt;i class="sp sp-search"&gt;&lt;/i&gt;</code> · change size with <code>s12</code>…<code>s40</code> or <code>style="--s:30"</code> · white version on dark backgrounds: add <code>light</code>.</p>
+</header>
+<div class="tools"><input id="q" placeholder="Filter icons…" oninput="filter(this.value)"><span id="count" style="font-size:13px;color:var(--muted)"></span></div>
+<main class="grid" id="grid">
+    <button class="card" data-n="flower-lg" onclick="copy(this)"><span class="well"><i class="sp sp-flower-lg" style="--s:32"></i></span><b>sp-flower-lg</b><small>x 1 · y 805 · 27×27</small></button>
+    <button class="card" data-n="ring-lg" onclick="copy(this)"><span class="well"><i class="sp sp-ring-lg" style="--s:32"></i></span><b>sp-ring-lg</b><small>x 29 · y 806 · 28×27</small></button>
+    <button class="card" data-n="flower" onclick="copy(this)"><span class="well"><i class="sp sp-flower" style="--s:32"></i></span><b>sp-flower</b><small>x 59 · y 807 · 23×21</small></button>
+    <button class="card" data-n="ring" onclick="copy(this)"><span class="well"><i class="sp sp-ring" style="--s:32"></i></span><b>sp-ring</b><small>x 83 · y 807 · 24×22</small></button>
+    <button class="card" data-n="arrow-left" onclick="copy(this)"><span class="well"><i class="sp sp-arrow-left" style="--s:32"></i></span><b>sp-arrow-left</b><small>x 110 · y 812 · 16×9</small></button>
+    <button class="card" data-n="arrow-right" onclick="copy(this)"><span class="well"><i class="sp sp-arrow-right" style="--s:32"></i></span><b>sp-arrow-right</b><small>x 131 · y 812 · 16×9</small></button>
+    <button class="card" data-n="close" onclick="copy(this)"><span class="well"><i class="sp sp-close" style="--s:32"></i></span><b>sp-close</b><small>x 152 · y 810 · 16×13</small></button>
+    <button class="card" data-n="flower-sm" onclick="copy(this)"><span class="well"><i class="sp sp-flower-sm" style="--s:32"></i></span><b>sp-flower-sm</b><small>x 171 · y 805 · 19×20</small></button>
+    <button class="card" data-n="ring-sm" onclick="copy(this)"><span class="well"><i class="sp sp-ring-sm" style="--s:32"></i></span><b>sp-ring-sm</b><small>x 190 · y 805 · 21×20</small></button>
+    <button class="card" data-n="monitor" onclick="copy(this)"><span class="well"><i class="sp sp-monitor" style="--s:32"></i></span><b>sp-monitor</b><small>x 211 · y 805 · 18×16</small></button>
+    <button class="card" data-n="facebook" onclick="copy(this)"><span class="well"><i class="sp sp-facebook" style="--s:32"></i></span><b>sp-facebook</b><small>x 230 · y 805 · 16×16</small></button>
+    <button class="card" data-n="facebook-alt" onclick="copy(this)"><span class="well"><i class="sp sp-facebook-alt" style="--s:32"></i></span><b>sp-facebook-alt</b><small>x 247 · y 805 · 16×16</small></button>
+    <button class="card" data-n="instagram" onclick="copy(this)"><span class="well"><i class="sp sp-instagram" style="--s:32"></i></span><b>sp-instagram</b><small>x 264 · y 805 · 16×16</small></button>
+    <button class="card" data-n="messenger" onclick="copy(this)"><span class="well"><i class="sp sp-messenger" style="--s:32"></i></span><b>sp-messenger</b><small>x 0 · y 834 · 16×16</small></button>
+    <button class="card" data-n="whatsapp" onclick="copy(this)"><span class="well"><i class="sp sp-whatsapp" style="--s:32"></i></span><b>sp-whatsapp</b><small>x 17 · y 834 · 16×16</small></button>
+    <button class="card" data-n="bookmark" onclick="copy(this)"><span class="well"><i class="sp sp-bookmark" style="--s:32"></i></span><b>sp-bookmark</b><small>x 54 · y 834 · 10×16</small></button>
+    <button class="card" data-n="browser" onclick="copy(this)"><span class="well"><i class="sp sp-browser" style="--s:32"></i></span><b>sp-browser</b><small>x 68 · y 834 · 16×16</small></button>
+    <button class="card" data-n="brush" onclick="copy(this)"><span class="well"><i class="sp sp-brush" style="--s:32"></i></span><b>sp-brush</b><small>x 85 · y 834 · 16×16</small></button>
+    <button class="card" data-n="store-star" onclick="copy(this)"><span class="well"><i class="sp sp-store-star" style="--s:32"></i></span><b>sp-store-star</b><small>x 102 · y 834 · 16×16</small></button>
+    <button class="card" data-n="table" onclick="copy(this)"><span class="well"><i class="sp sp-table" style="--s:32"></i></span><b>sp-table</b><small>x 119 · y 834 · 16×16</small></button>
+    <button class="card" data-n="card" onclick="copy(this)"><span class="well"><i class="sp sp-card" style="--s:32"></i></span><b>sp-card</b><small>x 136 · y 836 · 16×12</small></button>
+    <button class="card" data-n="warn-grey" onclick="copy(this)"><span class="well"><i class="sp sp-warn-grey" style="--s:32"></i></span><b>sp-warn-grey</b><small>x 153 · y 834 · 16×14</small></button>
+    <button class="card" data-n="warn-yellow" onclick="copy(this)"><span class="well"><i class="sp sp-warn-yellow" style="--s:32"></i></span><b>sp-warn-yellow</b><small>x 170 · y 834 · 16×14</small></button>
+    <button class="card" data-n="warn-red" onclick="copy(this)"><span class="well"><i class="sp sp-warn-red" style="--s:32"></i></span><b>sp-warn-red</b><small>x 204 · y 834 · 16×14</small></button>
+    <button class="card" data-n="chevron" onclick="copy(this)"><span class="well"><i class="sp sp-chevron" style="--s:32"></i></span><b>sp-chevron</b><small>x 241 · y 839 · 10×6</small></button>
+    <button class="card" data-n="coins" onclick="copy(this)"><span class="well"><i class="sp sp-coins" style="--s:32"></i></span><b>sp-coins</b><small>x 255 · y 834 · 16×16</small></button>
+    <button class="card" data-n="chat" onclick="copy(this)"><span class="well"><i class="sp sp-chat" style="--s:32"></i></span><b>sp-chat</b><small>x 1 · y 852 · 14×15</small></button>
+    <button class="card" data-n="chat-alt" onclick="copy(this)"><span class="well"><i class="sp sp-chat-alt" style="--s:32"></i></span><b>sp-chat-alt</b><small>x 18 · y 852 · 14×17</small></button>
+    <button class="card" data-n="id-card" onclick="copy(this)"><span class="well"><i class="sp sp-id-card" style="--s:32"></i></span><b>sp-id-card</b><small>x 34 · y 853 · 16×16</small></button>
+    <button class="card" data-n="cursor" onclick="copy(this)"><span class="well"><i class="sp sp-cursor" style="--s:32"></i></span><b>sp-cursor</b><small>x 52 · y 851 · 13×18</small></button>
+    <button class="card" data-n="mail" onclick="copy(this)"><span class="well"><i class="sp sp-mail" style="--s:32"></i></span><b>sp-mail</b><small>x 68 · y 854 · 16×10</small></button>
+    <button class="card" data-n="eye" onclick="copy(this)"><span class="well"><i class="sp sp-eye" style="--s:32"></i></span><b>sp-eye</b><small>x 85 · y 854 · 16×10</small></button>
+    <button class="card" data-n="rss" onclick="copy(this)"><span class="well"><i class="sp sp-rss" style="--s:32"></i></span><b>sp-rss</b><small>x 103 · y 852 · 14×17</small></button>
+    <button class="card" data-n="film" onclick="copy(this)"><span class="well"><i class="sp sp-film" style="--s:32"></i></span><b>sp-film</b><small>x 119 · y 851 · 16×18</small></button>
+    <button class="card" data-n="heart" onclick="copy(this)"><span class="well"><i class="sp sp-heart" style="--s:32"></i></span><b>sp-heart</b><small>x 153 · y 852 · 16×17</small></button>
+    <button class="card" data-n="like" onclick="copy(this)"><span class="well"><i class="sp sp-like" style="--s:32"></i></span><b>sp-like</b><small>x 187 · y 851 · 16×16</small></button>
+    <button class="card" data-n="link" onclick="copy(this)"><span class="well"><i class="sp sp-link" style="--s:32"></i></span><b>sp-link</b><small>x 204 · y 851 · 16×16</small></button>
+    <button class="card" data-n="search" onclick="copy(this)"><span class="well"><i class="sp sp-search" style="--s:32"></i></span><b>sp-search</b><small>x 221 · y 851 · 16×18</small></button>
+    <button class="card" data-n="search-alt" onclick="copy(this)"><span class="well"><i class="sp sp-search-alt" style="--s:32"></i></span><b>sp-search-alt</b><small>x 238 · y 851 · 16×18</small></button>
+    <button class="card" data-n="medal" onclick="copy(this)"><span class="well"><i class="sp sp-medal" style="--s:32"></i></span><b>sp-medal</b><small>x 257 · y 851 · 12×18</small></button>
+    <button class="card" data-n="chats" onclick="copy(this)"><span class="well"><i class="sp sp-chats" style="--s:32"></i></span><b>sp-chats</b><small>x 0 · y 869 · 16×15</small></button>
+    <button class="card" data-n="login" onclick="copy(this)"><span class="well"><i class="sp sp-login" style="--s:32"></i></span><b>sp-login</b><small>x 18 · y 868 · 13×16</small></button>
+    <button class="card" data-n="phone-download" onclick="copy(this)"><span class="well"><i class="sp sp-phone-download" style="--s:32"></i></span><b>sp-phone-download</b><small>x 37 · y 868 · 11×16</small></button>
+    <button class="card" data-n="docs" onclick="copy(this)"><span class="well"><i class="sp sp-docs" style="--s:32"></i></span><b>sp-docs</b><small>x 51 · y 868 · 16×16</small></button>
+    <button class="card" data-n="ticket" onclick="copy(this)"><span class="well"><i class="sp sp-ticket" style="--s:32"></i></span><b>sp-ticket</b><small>x 68 · y 869 · 16×14</small></button>
+    <button class="card" data-n="pencil-check" onclick="copy(this)"><span class="well"><i class="sp sp-pencil-check" style="--s:32"></i></span><b>sp-pencil-check</b><small>x 85 · y 870 · 16×13</small></button>
+    <button class="card" data-n="pencil" onclick="copy(this)"><span class="well"><i class="sp sp-pencil" style="--s:32"></i></span><b>sp-pencil</b><small>x 103 · y 868 · 15×15</small></button>
+    <button class="card" data-n="phone" onclick="copy(this)"><span class="well"><i class="sp sp-phone" style="--s:32"></i></span><b>sp-phone</b><small>x 119 · y 868 · 16×16</small></button>
+    <button class="card" data-n="location" onclick="copy(this)"><span class="well"><i class="sp sp-location" style="--s:32"></i></span><b>sp-location</b><small>x 136 · y 868 · 16×16</small></button>
+    <button class="card" data-n="help" onclick="copy(this)"><span class="well"><i class="sp sp-help" style="--s:32"></i></span><b>sp-help</b><small>x 153 · y 868 · 16×16</small></button>
+    <button class="card" data-n="clock" onclick="copy(this)"><span class="well"><i class="sp sp-clock" style="--s:32"></i></span><b>sp-clock</b><small>x 170 · y 868 · 16×16</small></button>
+    <button class="card" data-n="refresh" onclick="copy(this)"><span class="well"><i class="sp sp-refresh" style="--s:32"></i></span><b>sp-refresh</b><small>x 188 · y 869 · 14×15</small></button>
+    <button class="card" data-n="open-external" onclick="copy(this)"><span class="well"><i class="sp sp-open-external" style="--s:32"></i></span><b>sp-open-external</b><small>x 205 · y 869 · 14×14</small></button>
+    <button class="card" data-n="share" onclick="copy(this)"><span class="well"><i class="sp sp-share" style="--s:32"></i></span><b>sp-share</b><small>x 221 · y 868 · 16×16</small></button>
+    <button class="card" data-n="bag-add" onclick="copy(this)"><span class="well"><i class="sp sp-bag-add" style="--s:32"></i></span><b>sp-bag-add</b><small>x 239 · y 868 · 15×16</small></button>
+    <button class="card" data-n="basket" onclick="copy(this)"><span class="well"><i class="sp sp-basket" style="--s:32"></i></span><b>sp-basket</b><small>x 255 · y 868 · 16×16</small></button>
+    <button class="card" data-n="cart" onclick="copy(this)"><span class="well"><i class="sp sp-cart" style="--s:32"></i></span><b>sp-cart</b><small>x 1 · y 886 · 14×14</small></button>
+    <button class="card" data-n="handshake" onclick="copy(this)"><span class="well"><i class="sp sp-handshake" style="--s:32"></i></span><b>sp-handshake</b><small>x 17 · y 887 · 16×13</small></button>
+    <button class="card" data-n="handshake-light" onclick="copy(this)"><span class="well"><i class="sp sp-handshake-light" style="--s:32"></i></span><b>sp-handshake-light</b><small>x 34 · y 887 · 16×13</small></button>
+    <button class="card" data-n="star-circle" onclick="copy(this)"><span class="well"><i class="sp sp-star-circle" style="--s:32"></i></span><b>sp-star-circle</b><small>x 51 · y 885 · 16×16</small></button>
+    <button class="card" data-n="tag" onclick="copy(this)"><span class="well"><i class="sp sp-tag" style="--s:32"></i></span><b>sp-tag</b><small>x 85 · y 885 · 16×16</small></button>
+    <button class="card" data-n="caret-dark" onclick="copy(this)"><span class="well"><i class="sp sp-caret-dark" style="--s:32"></i></span><b>sp-caret-dark</b><small>x 105 · y 890 · 10×6</small></button>
+    <button class="card" data-n="caret-light" onclick="copy(this)"><span class="well"><i class="sp sp-caret-light" style="--s:32"></i></span><b>sp-caret-light</b><small>x 122 · y 890 · 10×6</small></button>
+    <button class="card" data-n="caret" onclick="copy(this)"><span class="well"><i class="sp sp-caret" style="--s:32"></i></span><b>sp-caret</b><small>x 139 · y 890 · 10×6</small></button>
+    <button class="card" data-n="trophy" onclick="copy(this)"><span class="well"><i class="sp sp-trophy" style="--s:32"></i></span><b>sp-trophy</b><small>x 170 · y 886 · 16×15</small></button>
+    <button class="card" data-n="shopping-bag" onclick="copy(this)"><span class="well"><i class="sp sp-shopping-bag" style="--s:32"></i></span><b>sp-shopping-bag</b><small>x 187 · y 885 · 16×16</small></button>
+    <button class="card" data-n="flower-xs" onclick="copy(this)"><span class="well"><i class="sp sp-flower-xs" style="--s:32"></i></span><b>sp-flower-xs</b><small>x 204 · y 885 · 15×16</small></button>
+    <button class="card" data-n="ring-xs" onclick="copy(this)"><span class="well"><i class="sp sp-ring-xs" style="--s:32"></i></span><b>sp-ring-xs</b><small>x 219 · y 885 · 18×16</small></button>
+    <button class="card" data-n="house-card" onclick="copy(this)"><span class="well"><i class="sp sp-house-card" style="--s:48"></i></span><b>sp-house-card</b><small>x 0 · y 360 · 80×82</small></button>
+    <button class="card" data-n="wallet-card" onclick="copy(this)"><span class="well"><i class="sp sp-wallet-card" style="--s:48"></i></span><b>sp-wallet-card</b><small>x 81 · y 368 · 66×77</small></button>
+    <button class="card" data-n="megaphone-circle" onclick="copy(this)"><span class="well"><i class="sp sp-megaphone-circle" style="--s:48"></i></span><b>sp-megaphone-circle</b><small>x 146 · y 368 · 61×57</small></button>
+    <button class="card" data-n="gamepad-circle" onclick="copy(this)"><span class="well"><i class="sp sp-gamepad-circle" style="--s:48"></i></span><b>sp-gamepad-circle</b><small>x 183 · y 449 · 62×59</small></button>
+    <button class="card" data-n="megaphone-teal" onclick="copy(this)"><span class="well"><i class="sp sp-megaphone-teal" style="--s:48"></i></span><b>sp-megaphone-teal</b><small>x 244 · y 449 · 40×39</small></button>
+    <button class="card" data-n="coins-gold" onclick="copy(this)"><span class="well"><i class="sp sp-coins-gold" style="--s:48"></i></span><b>sp-coins-gold</b><small>x 244 · y 488 · 40×42</small></button>
+    <button class="card" data-n="cube-circle" onclick="copy(this)"><span class="well"><i class="sp sp-cube-circle" style="--s:48"></i></span><b>sp-cube-circle</b><small>x 0 · y 508 · 60×60</small></button>
+    <button class="card" data-n="calendar-circle" onclick="copy(this)"><span class="well"><i class="sp sp-calendar-circle" style="--s:48"></i></span><b>sp-calendar-circle</b><small>x 61 · y 508 · 60×60</small></button>
+    <button class="card" data-n="filter-circle" onclick="copy(this)"><span class="well"><i class="sp sp-filter-circle" style="--s:48"></i></span><b>sp-filter-circle</b><small>x 122 · y 508 · 60×60</small></button>
+    <button class="card" data-n="chat-circle" onclick="copy(this)"><span class="well"><i class="sp sp-chat-circle" style="--s:48"></i></span><b>sp-chat-circle</b><small>x 183 · y 508 · 60×60</small></button>
+    <button class="card" data-n="megaphone-blue" onclick="copy(this)"><span class="well"><i class="sp sp-megaphone-blue" style="--s:48"></i></span><b>sp-megaphone-blue</b><small>x 244 · y 531 · 40×39</small></button>
+    <button class="card" data-n="store-circle" onclick="copy(this)"><span class="well"><i class="sp sp-store-circle" style="--s:48"></i></span><b>sp-store-circle</b><small>x 0 · y 569 · 60×60</small></button>
+    <button class="card" data-n="like-circle" onclick="copy(this)"><span class="well"><i class="sp sp-like-circle" style="--s:48"></i></span><b>sp-like-circle</b><small>x 61 · y 569 · 60×60</small></button>
+    <button class="card" data-n="comments-circle" onclick="copy(this)"><span class="well"><i class="sp sp-comments-circle" style="--s:48"></i></span><b>sp-comments-circle</b><small>x 122 · y 569 · 60×60</small></button>
+    <button class="card" data-n="people-circle" onclick="copy(this)"><span class="well"><i class="sp sp-people-circle" style="--s:48"></i></span><b>sp-people-circle</b><small>x 183 · y 569 · 60×60</small></button>
+    <button class="card" data-n="coin-blue" onclick="copy(this)"><span class="well"><i class="sp sp-coin-blue" style="--s:48"></i></span><b>sp-coin-blue</b><small>x 244 · y 570 · 40×42</small></button>
+    <button class="card" data-n="cart-circle" onclick="copy(this)"><span class="well"><i class="sp sp-cart-circle" style="--s:48"></i></span><b>sp-cart-circle</b><small>x 0 · y 631 · 60×60</small></button>
+    <button class="card" data-n="hub-circle" onclick="copy(this)"><span class="well"><i class="sp sp-hub-circle" style="--s:48"></i></span><b>sp-hub-circle</b><small>x 61 · y 631 · 60×60</small></button>
+    <button class="card" data-n="atom-circle" onclick="copy(this)"><span class="well"><i class="sp sp-atom-circle" style="--s:48"></i></span><b>sp-atom-circle</b><small>x 122 · y 631 · 60×60</small></button>
+    <button class="card" data-n="shop-person-circle" onclick="copy(this)"><span class="well"><i class="sp sp-shop-person-circle" style="--s:48"></i></span><b>sp-shop-person-circle</b><small>x 183 · y 631 · 60×60</small></button>
+    <button class="card" data-n="card-blue" onclick="copy(this)"><span class="well"><i class="sp sp-card-blue" style="--s:48"></i></span><b>sp-card-blue</b><small>x 244 · y 613 · 40×39</small></button>
+    <button class="card" data-n="flower-xl" onclick="copy(this)"><span class="well"><i class="sp sp-flower-xl" style="--s:48"></i></span><b>sp-flower-xl</b><small>x 245 · y 652 · 33×35</small></button>
+    <button class="card" data-n="video-circle" onclick="copy(this)"><span class="well"><i class="sp sp-video-circle" style="--s:48"></i></span><b>sp-video-circle</b><small>x 0 · y 692 · 60×60</small></button>
+    <button class="card" data-n="cursor-circle" onclick="copy(this)"><span class="well"><i class="sp sp-cursor-circle" style="--s:48"></i></span><b>sp-cursor-circle</b><small>x 61 · y 692 · 60×60</small></button>
+    <button class="card" data-n="globe-circle" onclick="copy(this)"><span class="well"><i class="sp sp-globe-circle" style="--s:48"></i></span><b>sp-globe-circle</b><small>x 122 · y 692 · 60×60</small></button>
+    <button class="card" data-n="home-blue" onclick="copy(this)"><span class="well"><i class="sp sp-home-blue" style="--s:48"></i></span><b>sp-home-blue</b><small>x 202 · y 754 · 40×40</small></button>
+    <button class="card" data-n="briefcase-blue" onclick="copy(this)"><span class="well"><i class="sp sp-briefcase-blue" style="--s:48"></i></span><b>sp-briefcase-blue</b><small>x 243 · y 754 · 40×40</small></button>
+</main>
+<div class="toast" id="t"></div>
+<script>
+  const cards=[...document.querySelectorAll('.card')];
+  function filter(q){q=q.trim().toLowerCase();let n=0;cards.forEach(c=>{const on=c.dataset.n.includes(q);c.style.display=on?'':'none';n+=on});count.textContent=n+' icons'}
+  function copy(el){const tag='<i class="sp sp-'+el.dataset.n+'"></i>';
+    (navigator.clipboard?navigator.clipboard.writeText(tag):Promise.reject()).catch(()=>{});
+    t.textContent='Copied: '+tag;t.classList.add('on');clearTimeout(window._t);window._t=setTimeout(()=>t.classList.remove('on'),1400)}
+  filter('');
+</script>
+</body>
+</html>

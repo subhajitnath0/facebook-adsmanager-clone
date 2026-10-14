@@ -1,0 +1,30 @@
+{
+  "level": "adsets",
+  "title": "Ad set",
+  "unit": "ad sets",
+  "nameW": 311,
+  "total": 5,
+  "columns": [
+    { "key": "spent",     "type": "money",  "label": "Amount<br>spent",              "w": 106, "chartIcon": true, "totalLabel": "Total Spent" },
+    { "key": "reach",     "type": "number", "label": "Reach",                        "w": 96, "totalLabel": "Meta accounts", "totalLink": true },
+    { "key": "tickets",   "type": "number", "label": "Masterclass<br>tickets",       "w": 128, "totalLabel": "Total" },
+    { "key": "cpt",       "type": "money",  "label": "Cost per<br>ticket",           "w": 106, "totalLabel": "Per Action" },
+    { "key": "purchases", "type": "number", "label": "Course<br>purchases",          "w": 117, "totalLabel": "Total" },
+    { "key": "cpcp",      "type": "money",  "label": "Cost per<br>course purchase",  "w": 133, "totalLabel": "Per Action" },
+    { "key": "pcv",       "type": "money",  "label": "Purchases<br>conversion value","w": 137, "totalLabel": "Total" },
+    { "key": "roas",      "type": "ratio",  "label": "Purchase<br>ROAS",             "w": 110, "totalLabel": "Average" }
+  ],
+  "totals": { "spent": 51200, "reach": 93600, "tickets": 300, "cpt": 171, "purchases": 20, "cpcp": 2560, "pcv": 129680, "roas": 2.53 },
+  "rows": [
+    { "id": 101, "campaignId": 1, "active": true, "name": "Meditation interest | IN 25-45", "desc": "New people · sales",
+      "spent": 24700, "reach": 57600, "tickets": 183, "cpt": 135, "purchases": 6, "cpcp": 4117, "pcv": 49794, "roas": 2.02 },
+    { "id": 102, "campaignId": 1, "active": true, "name": "Broad (Advantage+) | IN 25-45", "desc": "New people · sales",
+      "spent": 17300, "reach": 35700, "tickets": 117, "cpt": 148, "purchases": 3, "cpcp": 5767, "pcv": 24897, "roas": 1.44 },
+    { "id": 103, "campaignId": 2, "active": true, "name": "Masterclass registrants | 7 days", "desc": "Retarget · registrants",
+      "spent": 4000, "reach": 590, "tickets": null, "cpt": null, "purchases": 5, "cpcp": 800, "pcv": 24995, "roas": 6.25 },
+    { "id": 104, "campaignId": 2, "active": true, "name": "Masterclass attendees | 14 days", "desc": "Retarget · registrants",
+      "spent": 2000, "reach": 350, "tickets": null, "cpt": null, "purchases": 2, "cpcp": 1000, "pcv": 9998, "roas": 5.00 },
+    { "id": 105, "campaignId": 3, "active": true, "name": "Checkout abandoners | 7 days", "desc": "Retarget · checkouts",
+      "spent": 3200, "reach": 310, "tickets": null, "cpt": null, "purchases": 4, "cpcp": 800, "pcv": 19996, "roas": 6.25 }
+  ]
+}

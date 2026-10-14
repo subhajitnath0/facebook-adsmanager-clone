@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Campaign Manager</title>
+<link rel="icon" href="icons/logo.svg" type="image/svg+xml" />
+
+<!-- Libraries: Tailwind (layout utilities), Alpine.js (interactivity), Material Symbols (only for icons not in icon-sprite.webp) -->
+<!-- Keep icon-sprite.webp in the SAME folder as this file. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,300..500,0..1,0" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" /> <!-- column headers use Roboto 500 like Meta -->
+
+<style>
+  :root{
+    --page:#eef1f5; --panel:#ffffff; --line:#dadde1; --line-soft:#e9ebee;
+    --ink:#1c2b33; --muted:#65676b; --link:#1864cd;
+    --blue:#1877f2; --blue-dark:#0b66c3; --blue-soft:#e7f0fd; --blue-chip:#cfe2f8;
+    --green:#006b4e; --green-dark:#005a41;
+    --row-alt:#f5f6f7; --row-sel:#e7f0fd; --row-hover:#f0f2f5;
+    --dark-rail:#1c2b33; --badge:#a20c17;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{overflow:hidden}
+  /* page background: pink at top-left, blue down the left, mint at bottom-right (shows in the top band and below the app) */
+  body{margin:0;font-family:"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);font-size:14px;
+       background:radial-gradient(ellipse 1300px 320px at 100% 100%,#eaf8f0 20%,rgba(234,248,240,0) 90%),
+                  radial-gradient(ellipse 1500px 650px at 0 0,#faf1f1 22%,#f4edf5 40%,#e5f0fa 97%) #e5f0fa}
+  .app{display:flex;height:calc(100vh - 29px);min-height:560px} /* Meta's app stops ~29px above the window bottom */
+  .ms{font-family:'Material Symbols Outlined';font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;font-variation-settings:'FILL' 0,'wght' 400,'opsz' 20;-webkit-font-smoothing:antialiased;user-select:none}
+  .ms.fill{font-variation-settings:'FILL' 1,'wght' 400,'opsz' 20}
+  .ms.sm{font-size:16px}
+  .ms.xs{font-size:14px}
+
+  /* Left rail (50px, soft right/bottom edge instead of a border) */
+  .rail{width:50px;flex-shrink:0;background:#fff;display:flex;flex-direction:column;align-items:center;position:relative;z-index:5;
+        box-shadow:1px 0 0 rgba(226,226,226,.44),0 1px 0 rgba(226,226,226,.44),2px 0 0 rgba(0,0,0,.025),0 2px 0 rgba(0,0,0,.025)}
+  .rail-logo{display:block;flex-shrink:0;width:25px;height:auto;margin-top:18px}
+  .rail-btn{width:36px;height:36px;flex-shrink:0;display:grid;place-items:center;border-radius:4px;color:var(--ink);position:relative;transition:background .15s}
+  .rail-btn:hover{background:#e4e6eb}
+  .rail-btn.active{background:#e1edf7}
+  .nav-ic{width:24px;height:24px;display:block;flex-shrink:0;transform:translateX(.2px) scale(.9)} /* 24px art drawn at 21.6px like Meta */
+  .nav-ic-sm{width:18px;height:18px;display:block;flex-shrink:0}
+  .rail-divider{width:36px;height:1px;flex-shrink:0;background:#d1d8de}
+  .rail-badge{position:absolute;left:13px;top:2.5px;width:23px;height:16px;border-radius:8px;background:var(--badge);color:#fff;font:700 11px/16px Helvetica,Arial,sans-serif;text-align:center;pointer-events:none}
+  .rail-bottom{margin-top:auto;display:flex;flex-direction:column;align-items:center;padding-bottom:8px}
+  .rail-bottom .rail-divider{width:22px}
+  .rail-bottom .rail-btn{height:32px}
+  .thumb{width:41.5px;height:41.5px;object-fit:cover;margin:0 0 0 7.5px;flex-shrink:0;display:block} /* thumbs stack flush, row to row */
+  .ic16{width:16px;height:16px;display:block;flex-shrink:0}
+
+  /* Right dark rail */
+  .dark-rail{width:37px;flex-shrink:0;background:var(--dark-rail);box-shadow:0 0 4px rgba(0,0,0,.45);position:relative;z-index:5;display:flex;flex-direction:column;align-items:flex-start;padding:12px 0 0 11px}
+  .rail-ic{display:block;flex-shrink:0;cursor:pointer}
+
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border:1px solid #cbd0d6;border-radius:6px;background:#fff;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;white-space:nowrap;transition:background .15s}
+  .btn:hover:not(:disabled){background:#f2f3f5}
+  .btn:disabled{color:#bcc0c4;border-color:#e4e6eb;cursor:not-allowed}
+  .btn:disabled .ms{color:#bcc0c4}
+  .btn-blue{background:var(--blue-dark);border-color:var(--blue-dark);color:#fff}
+  .btn-blue:hover:not(:disabled){background:#0957a8}
+  .btn-green{background:var(--green);border-color:var(--green);color:#fff;font-weight:600}
+  .btn-green:hover:not(:disabled){background:var(--green-dark)}
+  .btn-ghost{border-color:transparent;background:transparent}
+  .split{display:inline-flex}
+  .split .btn:first-child{border-top-right-radius:0;border-bottom-right-radius:0}
+  .split .btn:last-child{border-top-left-radius:0;border-bottom-left-radius:0;border-left:none;padding:0 8px}
+
+  /* Top bar (sits on the page background) */
+  .topbar{height:54px;padding:0 7px 0 12px;display:flex;align-items:center;flex-shrink:0}
+  .topbar h1{font-size:17px;font-weight:600;line-height:22px;color:#1c2b33;white-space:nowrap;position:relative;top:-1px;margin:0}
+  .acct{display:flex;align-items:center;gap:7px;width:271px;height:35px;margin:3px 0 0 10px;padding:0 13px 0 11px;flex-shrink:0;border:1px solid #d1d8de;border-radius:4px;background:#fff;font-size:14px;color:#1c2b33;cursor:pointer}
+  .acct-q{width:21px;height:21px;border-radius:3px;background:#ffab6f;color:#a2401f;font-size:13px;font-weight:600;line-height:1;display:grid;place-items:center;flex-shrink:0;padding-top:2px;box-shadow:inset 0 1px 0 #d1cdcc}
+  .acct-div{width:1px;height:21px;background:#d7dde3;flex-shrink:0}
+  .acct-ic{width:22px;height:22px;border-radius:50%;background:#f1f4f7;display:grid;place-items:center;flex-shrink:0}
+  .acct-ic svg{display:block}
+  .acct-name{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-align:left;position:relative;top:-1px}
+  .topbar .caret{display:block;flex-shrink:0}
+  .opp{display:flex;align-items:center;margin:3px 0 0 18px;font-size:13px;color:#1c2b33;cursor:pointer;white-space:nowrap}
+  .opp .caret{position:relative;top:-1px}
+  .opp-label{margin:0 10px 0 8px}
+  .tb-right{margin-left:auto;display:flex;align-items:center}
+  .tb-updated{font-size:13px;color:#1c2b33;margin-right:14px;white-space:nowrap}
+  .tb-btn{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 14px;border:1px solid #afbac6;border-radius:4px;background:transparent;font-size:13px;font-weight:400;color:#1c2b33;white-space:nowrap;cursor:pointer;flex-shrink:0}
+  .tb-btn.icon{width:36px;padding:0}
+  .tb-btn + .tb-btn{margin-left:7px}
+  .tb-btn:hover:not(:disabled){background:rgba(28,43,51,.05)}
+  .tb-btn:disabled{border-color:#c6cfdb;color:#707b84;cursor:not-allowed}
+  .tb-avatar{display:block;width:34px;height:34px;margin-left:7px;flex-shrink:0}
+
+  /* Main panel: one bordered card holding the view chips, search, level tabs and the table */
+  .main-panel{flex:1;min-height:0;display:flex;flex-direction:column;background:#f1f4f7;border:1px solid #dbdee1;border-left-color:#e8ebee;border-right-color:#e8ebee;border-bottom-color:#dadee1;border-radius:6px 6px 8px 8px;box-shadow:-1px 0 0 rgba(0,0,0,.035),1px 0 0 rgba(0,0,0,.035)}
+  .views-card{display:flex;flex-direction:column;gap:7px;padding:7px 10px 0;margin-bottom:7px}
+  .views-row{display:flex;align-items:center;gap:7px;height:38px}
+  .chip{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;height:38px;padding:0 11px 4px;border:1px solid #d0d6dd;border-radius:4px;background:#fff;font-size:13px;font-weight:400;color:#1c2b33;white-space:nowrap;cursor:pointer;transition:background .15s}
+  .chip:not(.on):not(.see-more):hover{background:#c3dcf5}
+  .chip.on{border-color:#4699ce;border-right-color:#2989c6;color:#0a78be;font-weight:600}
+  .chip-ic{display:block;flex-shrink:0;width:16px;height:16px}
+  .chip-ic svg{display:block;width:16px;height:16px}
+  .chip.see-more{gap:8px;padding-bottom:3px;border-color:transparent;background:transparent}
+  .chip.see-more svg{display:block;flex-shrink:0;width:12px;height:12px}
+  .chip.see-more .chip-label{position:relative;top:-1px}
+  .create-view{display:inline-flex;align-items:center;justify-content:center;width:107px;height:38px;padding:0;border:0;border-radius:4px;background:#0a78be;color:#fff;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer}
+  .view-settings{display:grid;place-items:center;width:36px;height:38px;padding:0;border:1px solid #bbc4ce;border-radius:4px;background:transparent;color:#1c2b33;cursor:pointer}
+  /* search box with Meta's faint multicolour glow */
+  .ai-search{position:relative;isolation:isolate}
+  .ai-search::before{content:"";position:absolute;inset:-3px;z-index:-1;border-radius:7px;pointer-events:none;filter:blur(9px);opacity:.062;background:linear-gradient(90deg,#207dbb 0%,#207dbb 8%,#207d80 14%,#3e7d44 24%,#3e7d44 30%,#5c7d44 34%,#7a7d44 38%,#975f62 42%,#b55f62 46%,#b54180 51%,#b54180 59%,#97239d 64%,#97239d 67%,#5c239d 71%,#5c23bb 76%,#5c23d9 81%,#3e23d9 88%,#3e23d9 100%)}
+  .ai-search input{display:block;width:100%;height:32px;padding:0 15px 2px;border:0;border-radius:4px;background:#fff;font-size:13px;color:#1c2b33;outline:none}
+  .ai-search input::placeholder{color:#6a7a85;opacity:1}
+
+  /* Level tabs: active tab is taller and white, joined to the table by a 1px line */
+  .tabs-row{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:0 10px}
+  .tab{display:flex;align-items:center;gap:8px;flex:none;min-width:219px;height:37px;padding:0 12px 2px;border-radius:8px 8px 0 0;font-size:15px;font-weight:600;line-height:20px;color:#1c2b33;background:#f1f4f7;border:none;box-shadow:0 1px 3px 2px rgba(0,0,0,.06);cursor:pointer;white-space:nowrap}
+  .tab.on{height:40px;padding-bottom:3px;background:#fff;color:#0a78be;position:relative;z-index:1;box-shadow:0 1px 0 #d1d8de,0 1px 3px 2px rgba(0,0,0,.06);clip-path:inset(-8px -8px -1px -8px)}
+  .tab .tic{display:flex;flex-shrink:0;margin-top:2px}
+  .tab .tic svg{display:block;overflow:visible}
+  .date-btn{display:inline-flex;align-items:center;gap:7px;height:33px;padding:0 13px 2px 11px;border:1px solid #b0bbc6;border-radius:4px;background:transparent;font-size:13px;font-weight:400;line-height:18px;color:#1c2b33;white-space:nowrap;cursor:pointer;flex-shrink:0}
+  .date-btn:hover{background:rgba(28,43,51,.05)}
+  .date-btn svg{display:block;flex-shrink:0}
+  .date-btn .caret{margin-left:3px;position:relative;top:1px}
+  .date-btn span{letter-spacing:.1px}
+  /* white table card, inset 3px inside the panel border */
+  .table-card{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;margin:0 3px 6px;background:#fff;border-radius:8px 8px 6px 6px;box-shadow:0 2px 3px -1px rgba(0,0,0,.06)}
+  .sel-pill{display:inline-flex;align-items:center;gap:6px;background:var(--blue-dark);color:#fff;font-size:13px;font-weight:500;padding:2px 6px 2px 8px;border-radius:4px}
+
+  /* Table */
+  /* !important: the Tailwind CDN preflight sets border-collapse:collapse, which hides the borders of sticky cells */
+  table{border-collapse:separate!important;border-spacing:0;width:100%;table-layout:fixed}
+  th{height:43px;padding:0 8px 0 9px;font-family:Roboto,"Segoe UI",Helvetica,Arial,sans-serif;font-size:13px;font-weight:500;line-height:17px;color:#1c2b33;text-align:left;vertical-align:middle;background:#fff;position:sticky;top:0;z-index:3;border-bottom:1px solid #dadada;border-right:1px solid #dce0e4;white-space:nowrap}
+  th:nth-of-type(1){border-right-color:#e3e5e6;padding:0}
+  th:nth-last-of-type(2){border-right:0;padding:0 0 0 2px}  /* add-column circle */
+  th.filler{border-right:0;padding:0}
+  th .cb,td .cb{margin:0 auto}
+  td{height:41.5px;font-size:13px;line-height:18px;text-align:right;vertical-align:top;padding:3px 7px 0;white-space:nowrap;border-right:1px solid transparent}
+  td.cell-mid{vertical-align:middle;padding:0}
+  td.cell-name{padding:0}
+  td.left{text-align:left}
+  tbody tr{background:#fff}
+  tbody tr:nth-of-type(even){background:#f5f6f7} /* nth-of-type: the Alpine <template> would shift nth-child */
+  tbody tr:hover{background:#e5e5e5}
+  tbody tr:nth-of-type(even):hover{background:#f2f2f2}
+  tbody tr.sel{background:var(--row-sel)}
+  .sub{display:block;font-size:11.1px;line-height:16px;color:#6a7479;margin-top:.5px}
+  .num-link{text-decoration:underline dotted;text-decoration-thickness:1px;text-underline-offset:1px}
+  .sticky-col{position:sticky;background:inherit;z-index:2}
+  th.sticky-col{z-index:4;background:#fff}
+  .name-edge{border-right:1px solid #dcdddf!important}
+  .name-edge::after{content:"";position:absolute;top:0;bottom:0;right:-4px;width:3px;background:linear-gradient(90deg,rgba(0,0,0,.095),rgba(0,0,0,.005));pointer-events:none}
+  .th-inner{display:flex;align-items:center;min-width:0}
+  .th-label{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;cursor:pointer;color:#1c2b33}
+  .th-label.two{flex:1 1 0}
+  .th-main{display:block;overflow:hidden;text-overflow:ellipsis}
+  .th-sub{display:block;font-size:11px;line-height:15px;font-weight:400;color:#687378}
+  .sort-ic{flex:0 0 16px;width:16px;height:16px;margin:0 8px 0 4px;display:block}
+  .th-caret{flex:0 0 7px;width:7px;height:5px;margin-left:auto;display:block}
+
+  /* Checkbox */
+  .cb{appearance:none;width:22px;height:22px;border:1px solid #d4dadf;border-radius:4px;background:#fff;cursor:pointer;display:grid;place-items:center}
+  .cb:checked{border-color:var(--blue-dark)}
+  .cb:checked::after{content:"";width:6px;height:11px;border:solid var(--blue-dark);border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+
+  /* Toggle */
+  .toggle{display:block;width:34px;height:20px;margin-left:25px;border-radius:999px;background:#fff;border:1px solid #cbd2d9;position:relative;cursor:pointer;transition:.2s}
+  .toggle::after{content:"";position:absolute;top:1.5px;left:1.5px;width:15px;height:15px;border-radius:50%;background:#283943;transition:.2s}
+  .toggle.on{background:#e1edf7;border-color:#cbd2d9}
+  .toggle.on::after{top:0;left:14px;width:18px;height:18px;background:#0a78be}
+
+  /* Row hover actions */
+  /* name cell: thumb, name line, then hover pills laid over the lower half of the row */
+  .name-wrap{display:flex;align-items:flex-start;height:41.5px}
+  .name-col{position:relative;min-width:0;flex:1;padding:3px 0 0 10px}
+  .thumb + .name-col{padding-left:0;margin-left:7.5px}
+  .name-pencil{flex-shrink:0;margin:-2.4px 0 0 4px}
+  .hover-show{display:none}
+  tr:hover .hover-show{display:block}
+  td.col-money{position:relative}
+  .spent-chart{position:absolute;left:13.8px;top:11.6px}
+  .dash{display:inline-block;width:12px;height:1px;background:#1c2b33;vertical-align:4px} /* Meta draws empty values as a short line */
+  .row-actions{display:none;position:absolute;left:-1px;top:22px;gap:4px}
+  tr:hover .row-actions{display:flex}
+  tr:hover .row-desc{display:none}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#9e9c94;margin-right:7px;vertical-align:1px}
+  .dot.on{background:#339e4c}
+  .row-action{display:inline-flex;align-items:center;gap:2.5px;height:18px;padding:0 0 0 4.5px;border:1px solid #cbd2d9;border-radius:9px;background:#fff;font-size:12px;line-height:16px;color:#1c2b33;box-shadow:2px 1px 3px rgba(0,0,0,.08);white-space:nowrap;overflow:hidden}
+  .row-action.icon-only{width:22.5px;padding:0;justify-content:center}
+  .row-action:hover{background:#f2f3f5}
+  .hover-only{visibility:hidden}
+  tr:hover .hover-only{visibility:visible}
+
+  /* Opportunity score */
+  .score-ring{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;background:conic-gradient(var(--blue-dark) calc(var(--v)*1%),#dfe1e5 0)}
+  .score-ring span{width:24px;height:24px;border-radius:50%;background:#fff;display:grid;place-items:center}
+  .score-gauge{position:relative;width:28px;height:28px;display:inline-grid;place-items:center}
+  .score-gauge svg{position:absolute;inset:0}
+  .gauge-val{transition:stroke-dashoffset 1s cubic-bezier(.2,.7,.2,1)}
+  .score-gauge b{position:relative;font-size:11px;font-weight:700;color:var(--ink);line-height:1}
+
+  /* Floating assistant button */
+  .fab{position:absolute;z-index:30;right:19px;bottom:30px;width:52px;height:52px;padding:0;border-radius:50%;background:#fff;border:1px solid #d1d7dd;box-shadow:0 2px 8px rgba(0,0,0,.09);display:grid;place-items:center}
+  .fab .sp{--s:30;transform:translateX(1px)}
+  .fab-dot{position:absolute;top:-4px;right:-5px;width:7px;height:7px;border-radius:50%;background:#dd2334}
+
+  /* table scrollbars: native ones hidden, Meta's thin overlay thumbs drawn by tableBars() */
+  .scroll{scrollbar-width:none}
+  .scroll::-webkit-scrollbar{display:none}
+  .tbl-wrap{flex:1;min-height:0;position:relative;display:flex;flex-direction:column}
+  .tbl-vbar{position:absolute;right:0;width:12px;display:none;z-index:6;pointer-events:none}
+  .tbl-hbar{position:relative;flex-shrink:0;height:12px;background:#fff}
+  .tbl-vbar>i,.tbl-hbar>i{position:absolute;display:block;background:#c2c2c2;border-radius:3px;pointer-events:auto}
+  .tbl-vbar>i{left:3px;width:5px}
+  .tbl-hbar>i{top:3px;height:5px;display:none}
+  tfoot td{position:sticky;bottom:0;z-index:2;background:#fff;border-top:1px solid #e4e4e5;border-bottom:1px solid #f6f6f6;height:69px;padding-top:6px;vertical-align:top}
+  tfoot td::before{content:"";position:absolute;left:0;right:0;top:-3px;height:2px;background:linear-gradient(rgba(0,0,0,.005),rgba(0,0,0,.045));pointer-events:none}
+  .ft-info{display:inline-block;vertical-align:0;margin-left:2px}
+  tfoot td.sticky-col{z-index:4}
+  /* "View results": appears while the footer is hovered, reveals the totals when clicked */
+  .view-results{display:flex;align-items:center;gap:4px;margin:-1px 0 0 -1px;padding:0;font-size:11px;line-height:16.5px;color:#1c1e21;visibility:hidden;cursor:pointer}
+  .view-results svg{display:block;flex-shrink:0;margin-top:1px}
+  .view-results:hover{text-decoration:underline}
+  tfoot tr:hover .view-results{visibility:visible}
+  [x-cloak]{display:none!important}
+
+  /* ================= SPRITE ICONS (cropped from icon-sprite.webp) =================
+     How it works: one image holds every icon. Each .sp-NAME class stores where
+     that icon sits in the image (--x, --y = top-left corner in px, --w/--h = size,
+     --m = the bigger of w/h). --s is the size you want on screen.
+     The browser scales the whole image by k = s / m, then slides it so only
+     that one icon shows through the element "window".                       */
+  .sp{--s:20;--k:calc(var(--s) / var(--m));
+      display:inline-block;flex-shrink:0;vertical-align:middle;
+      width:calc(var(--w) * var(--k) * 1px);height:calc(var(--h) * var(--k) * 1px);
+      background-image:url("icon-sprite.webp");background-repeat:no-repeat;
+      background-size:calc(285px * var(--k)) calc(902px * var(--k));
+      background-position:calc(var(--x) * var(--k) * -1px) calc(var(--y) * var(--k) * -1px)}
+  .sp.s12{--s:12}.sp.s14{--s:14}.sp.s16{--s:16}.sp.s18{--s:18}.sp.s22{--s:22}
+  .sp.s24{--s:24}.sp.s26{--s:26}.sp.s28{--s:28}.sp.s31{--s:31}.sp.s32{--s:32}.sp.s40{--s:40}
+  .sp.light{filter:invert(1) brightness(1.6)}               /* black icon -> white, for dark backgrounds */
+  .rail-btn.active .sp{filter:invert(27%) sepia(92%) saturate(1900%) hue-rotate(201deg) brightness(.9)} /* black -> blue */
+  .btn:disabled .sp{opacity:.3}
+  .sp.ink{opacity:.85}
+  .sp-flower-lg{--x:1;--y:805;--w:27;--h:27;--m:27}
+  .sp-ring-lg{--x:29;--y:806;--w:28;--h:27;--m:28}
+  .sp-flower{--x:59;--y:807;--w:23;--h:21;--m:23}
+  .sp-ring{--x:83;--y:807;--w:24;--h:22;--m:24}
+  .sp-arrow-left{--x:110;--y:812;--w:16;--h:9;--m:16}
+  .sp-arrow-right{--x:131;--y:812;--w:16;--h:9;--m:16}
+  .sp-close{--x:152;--y:810;--w:16;--h:13;--m:16}
+  .sp-flower-sm{--x:171;--y:805;--w:19;--h:20;--m:20}
+  .sp-ring-sm{--x:190;--y:805;--w:21;--h:20;--m:21}
+  .sp-monitor{--x:211;--y:805;--w:18;--h:16;--m:18}
+  .sp-facebook{--x:230;--y:805;--w:16;--h:16;--m:16}
+  .sp-facebook-alt{--x:247;--y:805;--w:16;--h:16;--m:16}
+  .sp-instagram{--x:264;--y:805;--w:16;--h:16;--m:16}
+  .sp-messenger{--x:0;--y:834;--w:16;--h:16;--m:16}
+  .sp-whatsapp{--x:17;--y:834;--w:16;--h:16;--m:16}
+  .sp-bookmark{--x:54;--y:834;--w:10;--h:16;--m:16}
+  .sp-browser{--x:68;--y:834;--w:16;--h:16;--m:16}
+  .sp-brush{--x:85;--y:834;--w:16;--h:16;--m:16}
+  .sp-store-star{--x:102;--y:834;--w:16;--h:16;--m:16}
+  .sp-table{--x:119;--y:834;--w:16;--h:16;--m:16}
+  .sp-card{--x:136;--y:836;--w:16;--h:12;--m:16}
+  .sp-warn-grey{--x:153;--y:834;--w:16;--h:14;--m:16}
+  .sp-warn-yellow{--x:170;--y:834;--w:16;--h:14;--m:16}
+  .sp-warn-red{--x:204;--y:834;--w:16;--h:14;--m:16}
+  .sp-chevron{--x:241;--y:839;--w:10;--h:6;--m:10}
+  .sp-coins{--x:255;--y:834;--w:16;--h:16;--m:16}
+  .sp-chat{--x:1;--y:852;--w:14;--h:15;--m:15}
+  .sp-chat-alt{--x:18;--y:852;--w:14;--h:17;--m:17}
+  .sp-id-card{--x:34;--y:853;--w:16;--h:16;--m:16}
+  .sp-cursor{--x:52;--y:851;--w:13;--h:18;--m:18}
+  .sp-mail{--x:68;--y:854;--w:16;--h:10;--m:16}
+  .sp-eye{--x:85;--y:854;--w:16;--h:10;--m:16}
+  .sp-rss{--x:103;--y:852;--w:14;--h:17;--m:17}
+  .sp-film{--x:119;--y:851;--w:16;--h:18;--m:18}
+  .sp-heart{--x:153;--y:852;--w:16;--h:17;--m:17}
+  .sp-like{--x:187;--y:851;--w:16;--h:16;--m:16}
+  .sp-link{--x:204;--y:851;--w:16;--h:16;--m:16}
+  .sp-search{--x:221;--y:851;--w:16;--h:18;--m:18}
+  .sp-search-alt{--x:238;--y:851;--w:16;--h:18;--m:18}
+  .sp-medal{--x:257;--y:851;--w:12;--h:18;--m:18}
+  .sp-chats{--x:0;--y:869;--w:16;--h:15;--m:16}
+  .sp-login{--x:18;--y:868;--w:13;--h:16;--m:16}
+  .sp-phone-download{--x:37;--y:868;--w:11;--h:16;--m:16}
+  .sp-docs{--x:51;--y:868;--w:16;--h:16;--m:16}
+  .sp-ticket{--x:68;--y:869;--w:16;--h:14;--m:16}
+  .sp-pencil-check{--x:85;--y:870;--w:16;--h:13;--m:16}
+  .sp-pencil{--x:103;--y:868;--w:15;--h:15;--m:15}
+  .sp-phone{--x:119;--y:868;--w:16;--h:16;--m:16}
+  .sp-location{--x:136;--y:868;--w:16;--h:16;--m:16}
+  .sp-help{--x:153;--y:868;--w:16;--h:16;--m:16}
+  .sp-clock{--x:170;--y:868;--w:16;--h:16;--m:16}
+  .sp-refresh{--x:188;--y:869;--w:14;--h:15;--m:15}
+  .sp-open-external{--x:205;--y:869;--w:14;--h:14;--m:14}
+  .sp-share{--x:221;--y:868;--w:16;--h:16;--m:16}
+  .sp-bag-add{--x:239;--y:868;--w:15;--h:16;--m:16}
+  .sp-basket{--x:255;--y:868;--w:16;--h:16;--m:16}
+  .sp-cart{--x:1;--y:886;--w:14;--h:14;--m:14}
+  .sp-handshake{--x:17;--y:887;--w:16;--h:13;--m:16}
+  .sp-handshake-light{--x:34;--y:887;--w:16;--h:13;--m:16}
+  .sp-star-circle{--x:51;--y:885;--w:16;--h:16;--m:16}
+  .sp-tag{--x:85;--y:885;--w:16;--h:16;--m:16}
+  .sp-caret-dark{--x:105;--y:890;--w:10;--h:6;--m:10}
+  .sp-caret-light{--x:122;--y:890;--w:10;--h:6;--m:10}
+  .sp-caret{--x:139;--y:890;--w:10;--h:6;--m:10}
+  .sp-trophy{--x:170;--y:886;--w:16;--h:15;--m:16}
+  .sp-shopping-bag{--x:187;--y:885;--w:16;--h:16;--m:16}
+  .sp-flower-xs{--x:204;--y:885;--w:15;--h:16;--m:16}
+  .sp-ring-xs{--x:219;--y:885;--w:18;--h:16;--m:18}
+  .sp-house-card{--x:0;--y:360;--w:80;--h:82;--m:82}
+  .sp-wallet-card{--x:81;--y:368;--w:66;--h:77;--m:77}
+  .sp-megaphone-circle{--x:146;--y:368;--w:61;--h:57;--m:61}
+  .sp-gamepad-circle{--x:183;--y:449;--w:62;--h:59;--m:62}
+  .sp-megaphone-teal{--x:244;--y:449;--w:40;--h:39;--m:40}
+  .sp-coins-gold{--x:244;--y:488;--w:40;--h:42;--m:42}
+  .sp-cube-circle{--x:0;--y:508;--w:60;--h:60;--m:60}
+  .sp-calendar-circle{--x:61;--y:508;--w:60;--h:60;--m:60}
+  .sp-filter-circle{--x:122;--y:508;--w:60;--h:60;--m:60}
+  .sp-chat-circle{--x:183;--y:508;--w:60;--h:60;--m:60}
+  .sp-megaphone-blue{--x:244;--y:531;--w:40;--h:39;--m:40}
+  .sp-store-circle{--x:0;--y:569;--w:60;--h:60;--m:60}
+  .sp-like-circle{--x:61;--y:569;--w:60;--h:60;--m:60}
+  .sp-comments-circle{--x:122;--y:569;--w:60;--h:60;--m:60}
+  .sp-people-circle{--x:183;--y:569;--w:60;--h:60;--m:60}
+  .sp-coin-blue{--x:244;--y:570;--w:40;--h:42;--m:42}
+  .sp-cart-circle{--x:0;--y:631;--w:60;--h:60;--m:60}
+  .sp-hub-circle{--x:61;--y:631;--w:60;--h:60;--m:60}
+  .sp-atom-circle{--x:122;--y:631;--w:60;--h:60;--m:60}
+  .sp-shop-person-circle{--x:183;--y:631;--w:60;--h:60;--m:60}
+  .sp-card-blue{--x:244;--y:613;--w:40;--h:39;--m:40}
+  .sp-flower-xl{--x:245;--y:654;--w:33;--h:33;--m:33}
+  .sp-video-circle{--x:0;--y:692;--w:60;--h:60;--m:60}
+  .sp-cursor-circle{--x:61;--y:692;--w:60;--h:60;--m:60}
+  .sp-globe-circle{--x:122;--y:692;--w:60;--h:60;--m:60}
+  .sp-home-blue{--x:202;--y:754;--w:40;--h:40;--m:40}
+  .sp-briefcase-blue{--x:243;--y:754;--w:40;--h:40;--m:40}
+  /* ===== Table toolbar ===== */
+  .toolbar{display:flex;align-items:center;gap:7px;height:47px;padding:0 7px;border-bottom:1px solid #d8d8d8;background:#fff;flex-shrink:0}
+  .toolbar .btn{height:32px;padding:0 14px 0 9px;gap:6px;border:1px solid #b2bcc7;border-radius:4px;background:#fff;color:var(--ink);font-size:14px;font-weight:400;letter-spacing:-.2px}
+  .toolbar .btn:disabled{opacity:.6;color:var(--ink);border-color:#b2bcc7;cursor:not-allowed}
+  .toolbar .btn-green{background:var(--green);border-color:var(--green);color:#fff}
+  .toolbar .btn-green:hover:not(:disabled){background:var(--green-dark)}
+  .toolbar .btn-ghost{border-color:transparent;background:transparent;padding:0 14px}
+  .toolbar .btn.icon-only{padding:0 9px}
+  .toolbar .ico{width:16px;height:16px;flex-shrink:0;display:block}
+  .toolbar img.ico{width:14px;height:14px;margin:1px}
+  .toolbar .ico-box{width:16px;height:16px;flex-shrink:0;display:grid;place-items:center}
+  .toolbar .caret{width:10px;height:8px;flex-shrink:0;display:block;margin:0 -1px 0 2px}
+  .toolbar .tb-sep{width:1px;height:32px;background:#d1d7de;flex-shrink:0}
+  .toolbar .split{display:inline-flex}
+  .toolbar .split .btn:first-child{border-radius:4px 0 0 4px;border-right:none;padding:0 9px}
+  .toolbar .split .btn:last-child{border-radius:0 4px 4px 0;border-left:1px solid #a7b3bf;padding:0 12px}
+  .toolbar .split .btn:last-child .caret{margin:0}
+</style>
+</head>
+
+<body x-data="dashboard()">
+<div class="app">
+
+  <!-- ===== Left icon rail ===== -->
+  <aside class="rail">
+    <img class="rail-logo" src="icons/logo.svg" alt="Meta">
+    <button class="rail-btn" style="margin-top:29.4px" title="Notifications">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="#1c2b33" stroke-width="2.1" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a5.2 5.2 0 0 0-5.2 5.2v4.4l-2.1 4.5c-.2.5.1.9.6.9h13.4c.5 0 .8-.4.6-.9l-2.1-4.5V8.2A5.2 5.2 0 0 0 12 3z"/><path d="M9.7 20.4a2.3 2.3 0 0 0 4.6 0"/></svg>
+      <span class="rail-badge">25</span>
+    </button>
+    <div class="rail-divider" style="margin-top:17px"></div>
+    <button class="rail-btn" style="margin-top:14px" title="Overview">
+      <svg class="nav-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.44 19.08A9 9 0 1 1 17.56 19.08Q12 17.2 6.44 19.08Z" fill="none" stroke="#1c2b33" stroke-width="2" stroke-linejoin="round"/><path d="M3.5 12H5.2M20.5 12H18.8M7.5 4.79 8.4 6.23M16.5 4.79 15.6 6.23" fill="none" stroke="#1c2b33" stroke-width="2" stroke-linecap="round"/><path d="M12 7 13.830 11.2A2 2 0 1 1 10.17 11.2Z" fill="#1c2b33"/></svg>
+    </button>
+    <!-- uneven 1-3px margins reproduce Meta's 37.8px item pitch once Chrome snaps boxes to whole pixels -->
+    <button class="rail-btn active" style="margin-top:2px" title="Campaigns"><img class="nav-ic" src="icons/campaigns-active.svg" alt=""></button>
+    <button class="rail-btn" style="margin-top:2px" title="Reports"><img class="nav-ic" src="icons/reports.svg" alt=""></button>
+    <button class="rail-btn" style="margin-top:2px" title="Audiences"><img class="nav-ic" src="icons/audiences.svg" alt=""></button>
+    <button class="rail-btn" style="margin-top:1px" title="Advertising settings"><img class="nav-ic" src="icons/ad-settings.svg" alt=""></button>
+    <button class="rail-btn" style="margin-top:3px" title="Billing"><img class="nav-ic" src="icons/billing.svg" alt=""></button>
+    <button class="rail-btn" style="margin-top:1px" title="Events manager"><img class="nav-ic" src="icons/events-manager.svg" alt=""></button>
+    <button class="rail-btn" style="margin-top:2px" title="All tools"><img class="nav-ic-sm" src="icons/all-tools.svg" alt=""></button>
+    <div class="rail-bottom">
+      <div class="rail-divider"></div>
+      <button class="rail-btn" style="margin-top:9px" title="Help"><img class="nav-ic-sm" style="transform:translateX(.8px)" src="icons/help.svg" alt=""></button>
+      <button class="rail-btn" style="margin-top:2px" title="Settings"><img class="nav-ic-sm" src="icons/settings.svg" alt=""></button>
+      <button class="rail-btn" style="margin-top:1px" title="Search"><img class="nav-ic-sm" src="icons/search.svg" alt=""></button>
+      <button class="rail-btn" title="Report a problem"><img class="nav-ic-sm" src="icons/report-problem.svg" alt=""></button>
+    </div>
+  </aside>
+
+  <!-- ===== Main ===== -->
+  <main class="flex-1 flex flex-col min-w-0 relative" style="padding:0 4px 0 4px">
+
+    <!-- Top bar -->
+    <header class="topbar" style="margin:0 -4px">
+      <h1 x-text="({campaigns:'Campaigns',adsets:'Ad sets',ads:'Ads'})[tab]">Campaigns</h1>
+      <button class="acct">
+        <span class="acct-q">Q</span>
+        <span class="acct-div"></span>
+        <span class="acct-ic"><svg width="14" height="10" viewBox="0 0 16 11.4" aria-hidden="true"><g fill="none" stroke="#1c2b33"><rect x="1" y="1" width="9" height="9.4" rx="1.6" stroke-width="2"/><path d="M2 7.9h7M6.5 8.4v1.2" stroke-width="1"/><path d="M12.2 1.8h3.6M12.2 5.8h3.6M12.2 9.8h3.6" stroke-width="1.4"/></g></svg></span>
+        <span class="acct-name">Qynto (1234567890123...</span>
+        <svg class="caret" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 .5h8a.5.5 0 0 1 .4.8L5.4 5.2a.5.5 0 0 1-.8 0L.6 1.3A.5.5 0 0 1 1 .5z" fill="#1c2b33"/></svg>
+      </button>
+      <button class="opp">
+        <span class="score-gauge" x-data="gauge(85)" x-init="play()" @refresh-gauge.window="play()">
+          <!-- 270deg gauge, open at the bottom. Arc length 47.12; the blue part sweeps in on load -->
+          <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" fill="none" stroke="#e5e8f0" stroke-width="2.36" stroke-linecap="round"
+                    stroke-dasharray="47.12 62.83" transform="rotate(135 12 12)"/>
+            <circle class="gauge-val" cx="12" cy="12" r="10" fill="none" stroke="#1771ed" stroke-width="2.36" stroke-linecap="round"
+                    stroke-dasharray="47.12 62.83" :style="'stroke-dashoffset:' + offset" style="stroke-dashoffset:47.12"
+                    transform="rotate(135 12 12)"/>
+          </svg>
+          <b x-text="shown">0</b>
+        </span>
+        <span class="opp-label">Opportunity score</span>
+        <svg class="caret" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 .5h8a.5.5 0 0 1 .4.8L5.4 5.2a.5.5 0 0 1-.8 0L.6 1.3A.5.5 0 0 1 1 .5z" fill="#1c2b33"/></svg>
+      </button>
+      <div class="tb-right">
+        <span class="tb-updated" x-text="updatedText"></span>
+        <button class="tb-btn icon" title="Refresh" @click="refresh()"><img src="icons/refresh.svg" width="14" height="14" alt="" style="display:block"></button>
+        <button class="tb-btn" :disabled="!dirty" @click="dirty=false">Review and publish</button>
+        <button class="tb-btn icon" title="More"><svg width="12" height="4" viewBox="0 0 12 4" aria-hidden="true" fill="#1c2b33"><circle cx="2" cy="2" r="1.35"/><circle cx="6" cy="2" r="1.35"/><circle cx="10" cy="2" r="1.35"/></svg></button>
+        <img class="tb-avatar" alt="Profile" src="data:image/png;base64,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">
+      </div>
+    </header>
+
+    <div class="main-panel">
+    <!-- View chips + search -->
+    <section class="views-card">
+      <div class="views-row">
+        <template x-for="v in views" :key="v.id">
+          <button class="chip" :class="view===v.id && 'on'" :style="'width:' + v.w + 'px'" @click="view=v.id">
+            <span class="chip-ic" x-html="v.ico"></span><span class="chip-label" x-text="v.label"></span>
+          </button>
+        </template>
+        <button class="chip see-more"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 .75v10.5M.75 6h10.5"/></svg><span class="chip-label">See more</span></button>
+        <div class="ml-auto flex items-center" style="gap:4px">
+          <button class="create-view">Create a view</button>
+          <button class="view-settings" title="View settings"><svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M4.9 3.1h7.8M.6 8.15h7.8"/><circle cx="2.9" cy="2.9" r="2"/><circle cx="10.45" cy="8.3" r="2"/></svg></button>
+        </div>
+      </div>
+      <div class="ai-search"><input x-model="query" placeholder="Describe what you're looking for" /></div>
+    </section>
+
+    <!-- Tabs + date range -->
+    <div class="tabs-row">
+      <div class="flex items-end h-10" style="gap:7px">
+        <template x-for="t in tabs" :key="t.id">
+          <div class="tab" :class="tab===t.id && 'on'" @click="setTab(t.id)">
+            <span class="tic" x-html="tab===t.id ? t.svgOn : t.svgOff"></span>
+            <span x-text="levelLabel(t.id)"></span>
+            <span class="sel-pill" x-show="sel[t.id].length" x-cloak>
+              <span x-text="sel[t.id].length + ' selected'"></span>
+              <button @click.stop="sel[t.id]=[]" class="grid place-items-center"><span class="ms xs">close</span></button>
+            </span>
+          </div>
+        </template>
+      </div>
+      <button class="date-btn">
+        <svg width="14" height="15" viewBox="0 0 14 15" fill="none" stroke="#1c2b33" aria-hidden="true"><rect x="1.3" y="3.2" width="11.3" height="10.6" rx="2" stroke-width="1.2"/><path d="M4 1.3v1.9M9.4 1.3v1.9" stroke-width="1.3" stroke-linecap="round"/><path d="M1.3 6.3h11.3M1.3 10h11.3M4.9 6.3v7.5M9 6.3v7.5" stroke-width="1.3"/></svg>
+        <span>Maximum: 14 Sep 2023 - 14 Oct 2026</span>
+        <svg class="caret" width="8" height="6" viewBox="0 0 8 6" fill="#1c2b33" aria-hidden="true"><path d="M0 0h8v.5L4.4 5.3h-.8L0 .5z"/></svg>
+      </button>
+    </div>
+
+    <!-- Table panel -->
+    <section class="table-card">
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <button class="btn btn-green"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"/></svg>Create</button>
+        <button class="btn" :disabled="!selected.length"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.05" y="1.95" width="8.25" height="9.5" rx="1.5"/><path d="M6.15 4.85H8.55M6.15 7.4H7.1M14.1 4.85V12.3a2 2 0 0 1-2 2H7.55"/></svg>Duplicate</button>
+        <button class="btn" :disabled="!selected.length"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 11.5 11 3a1.414 1.414 0 0 1 2 2l-8.5 8.5-2.3.3zM9 5l2 2"/></svg>Edit</button>
+        <button class="btn icon-only" x-show="selected.length" x-cloak @click="deleteSelected()" title="Delete"><span class="ms sm">delete</span></button>
+        <span class="tb-sep"></span>
+        <button class="btn"><span class="ico-box"><i class="sp sp-flower-xs s14"></i></span>Analyse</button>
+        <button class="btn"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.2 2.2V6.6L3.15 12.15c-.6.9 0 2.2 1.1 2.2h8.8c1.1 0 1.7-1.3 1.1-2.2L10.1 6.6V2.2M4.5 10.3h8.3"/><rect x="6.3" y="1.3" width="4.7" height="1.4" rx=".5" fill="currentColor" stroke="none"/></svg><span style="letter-spacing:0;word-spacing:1px">A/B test</span></button>
+        <button class="btn icon-only" x-show="selected.length" x-cloak title="Tags"><i class="sp sp-tag s16"></i></button>
+        <button class="btn btn-ghost">More<svg class="caret" viewBox="0 0 10 8" aria-hidden="true"><path d="M.5 2.2h9L5 7.6z" fill="currentColor"/></svg></button>
+        <div class="ml-auto flex gap-[7px]">
+          <button class="btn"><img class="ico" src="icons/columns.svg" alt="">Columns<svg class="caret" viewBox="0 0 10 8" aria-hidden="true"><path d="M.5 2.2h9L5 7.6z" fill="currentColor"/></svg></button>
+          <button class="btn"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width=".9" aria-hidden="true"><rect x="2.55" y="2.15" width="11.5" height="2.75" rx=".6"/><rect x="6.95" y="6.2" width="7.1" height="3.6" rx=".6"/><rect x="6.95" y="11.1" width="7.1" height="2.8" rx=".6"/></svg>Breakdown<svg class="caret" viewBox="0 0 10 8" aria-hidden="true"><path d="M.5 2.2h9L5 7.6z" fill="currentColor"/></svg></button>
+          <!-- Meta has no Groups button on the Ads tab; the empty wrapper keeps its 14px gap -->
+          <div class="flex"><button class="btn" x-show="tab!=='ads'"><img class="ico" src="icons/groups.svg" alt="">Groups<svg class="caret" viewBox="0 0 10 8" aria-hidden="true"><path d="M.5 2.2h9L5 7.6z" fill="currentColor"/></svg></button></div>
+          <button class="btn" title="Reports"><img class="ico" src="icons/reports-small.svg" alt=""><svg class="caret" viewBox="0 0 10 8" aria-hidden="true"><path d="M.5 2.2h9L5 7.6z" fill="currentColor"/></svg></button>
+          <div class="split">
+            <button class="btn" @click="exportCsv()" title="Export"><img class="ico" src="icons/export.svg" alt=""></button>
+            <button class="btn"><svg class="caret" viewBox="0 0 10 8" aria-hidden="true"><path d="M.5 2.2h9L5 7.6z" fill="currentColor"/></svg></button>
+          </div>
+          <button class="btn icon-only" title="Charts"><img class="ico" src="icons/charts.svg" alt=""></button>
+        </div>
+      </div>
+
+      <!-- Data table -->
+      <div class="tbl-wrap"><div id="tblScroll" class="flex-1 min-h-0 overflow-auto scroll">
+        <table>
+          <thead>
+            <tr>
+              <th class="sticky-col" style="left:0;width:44px"><input type="checkbox" class="cb" :checked="allChecked" @change="toggleAll($event.target.checked)"></th>
+              <th class="sticky-col" style="left:44px;width:84px" title="Off/On"><div class="th-inner"><span class="th-label two">Off...</span><svg class="sort-ic" viewBox="0 0 16 16" fill="none" stroke="#1c2b33" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 2v8.7M1.8 4.7 4.5 2l2.7 2.7M11.2 3.8V12M8.5 9.3l2.7 2.7 2.7-2.7"/></svg><span style="flex:0 0 5px"></span></div></th>
+              <th class="sticky-col name-edge" :style="'left:128px;width:' + (level.nameW || 311) + 'px'"><div class="th-inner"><button class="th-label" @click="sort('name')" x-text="level.title"></button><svg class="sort-ic" viewBox="0 0 16 16" fill="none" stroke="#1c2b33" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 2v8.7M1.8 4.7 4.5 2l2.7 2.7M11.2 3.8V12M8.5 9.3l2.7 2.7 2.7-2.7"/></svg><svg class="th-caret" width="7" height="5" viewBox="0 0 7 5" aria-hidden="true"><path d="M0 .6h7L3.5 4.6z" fill="#1c2b33"/></svg></div></th>
+              <th style="width:31px;padding:0 8px 0 0"><div class="th-inner"><svg class="th-caret" width="7" height="5" viewBox="0 0 7 5" aria-hidden="true"><path d="M0 .6h7L3.5 4.6z" fill="#1c2b33"/></svg></div></th>
+              <template x-for="c in level.columns" :key="c.key">
+                <th :style="'width:' + c.w + 'px'"><div class="th-inner">
+                  <button class="th-label" :class="c.label.includes('<br>') && 'two'" @click="sort(c.key)"><span class="th-main" x-html="c.label"></span><span class="th-sub" x-show="c.sub" x-text="c.sub"></span></button>
+                  <svg class="sort-ic" x-show="!c.sub" viewBox="0 0 16 16" fill="none" stroke="#1c2b33" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 2v8.7M1.8 4.7 4.5 2l2.7 2.7M11.2 3.8V12M8.5 9.3l2.7 2.7 2.7-2.7"/></svg><svg class="th-caret" width="7" height="5" viewBox="0 0 7 5" aria-hidden="true"><path d="M0 .6h7L3.5 4.6z" fill="#1c2b33"/></svg>
+                </div></th>
+              </template>
+              <th style="width:28px"><svg width="12" height="12" viewBox="0 0 12 12" style="display:block;margin:0 auto" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#bec4c6"/><path d="M6 3.4v5.2M3.4 6h5.2" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg></th>
+              <th class="filler"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="r in rows" :key="tab + '-' + r.id">
+              <tr :class="selected.includes(r.id) && 'sel'">
+                <td class="left sticky-col cell-mid" style="left:0">
+                  <input type="checkbox" class="cb" :value="r.id" x-model.number="sel[tab]">
+                </td>
+                <td class="left sticky-col cell-mid" style="left:44px">
+                  <button class="toggle" :class="r.active && 'on'" @click="r.active=!r.active; dirty=true" :title="r.active ? 'Turn off' : 'Turn on'"></button>
+                </td>
+                <td class="left sticky-col name-edge cell-name" style="left:128px">
+                  <div class="name-wrap">
+                    <template x-if="r.thumb"><img class="thumb" :src="r.thumb" alt=""></template>
+                    <div class="name-col">
+                      <div class="flex items-center">
+                        <a href="#" class="name-link truncate" :class="level.plainNames ? 'text-[var(--ink)] plain' : 'text-[var(--link)]'" x-text="r.name"></a>
+                        <svg class="name-pencil hover-show" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#485c6b" stroke-width="1.1" stroke-linejoin="round" aria-hidden="true"><path d="M2 11 11 2a1.414 1.414 0 0 1 2 2l-9 9H2z"/><path d="M8 5l2 2"/></svg>
+                      </div>
+                      <span class="sub row-desc truncate" x-show="r.desc" x-text="r.desc"></span>
+                      <div class="row-actions">
+                        <button class="row-action" style="width:57px"><svg width="11" height="10" viewBox="0 0 11 10" fill="#283943" aria-hidden="true"><rect x="0" y="5.2" width="3.4" height="4.8" rx=".5"/><rect x="3.8" y="0" width="3.4" height="10" rx=".5"/><rect x="7.6" y="2" width="3.4" height="8" rx=".5"/></svg>Charts</button>
+                        <button class="row-action" style="width:44px"><svg width="11" height="11" viewBox="0 0 11 11" fill="#283943" aria-hidden="true"><path d="M.6 10.4l.5-2.3 5.3-5.3 1.8 1.8-5.3 5.3z"/><path d="M7.3 2.1l1-1a1.1 1.1 0 0 1 1.6 0l.2.2a1.1 1.1 0 0 1 0 1.6l-1 1z"/></svg>Edit</button>
+                        <button class="row-action" style="width:71px"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1.1" y=".7" width="7.3" height="9.1" rx="1.2" fill="#283943"/><path d="M3.3 3.6h3M3.3 5.7h2" stroke="#fff" stroke-width="1"/><path d="M10.4 3.6v6.2a1.6 1.6 0 0 1-1.6 1.6H3.4" fill="none" stroke="#283943" stroke-width="1"/></svg>Duplicate</button>
+                        <button class="row-action" style="width:69px" x-show="tab!=='ads'"><svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true"><rect x="1.5" y="2.2" width="9.8" height="9.6" rx="1.6" fill="#283943"/><path d="M1.8 8.9 4.3 6.6 5.7 8.1 8.3 5.6" fill="none" stroke="#fff" stroke-width="1.1" stroke-linejoin="round"/><path d="M6.6 4.7h2.8v2.8z" fill="#fff"/></svg>Compare</button>
+                        <button class="row-action icon-only" title="Compare" x-show="tab==='ads'"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><rect x=".1" y=".4" width="9.4" height="9.5" rx="1.3" fill="#283943"/><path d="M.6 6.8 1.9 5.3 3.3 6.3 6.3 3.2M4.4 3.2h1.9v1.9" fill="none" stroke="#fff" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                        <button class="row-action icon-only" title="More"><svg width="12" height="3" viewBox="0 0 12 3" fill="#283943" style="margin-top:-1px" aria-hidden="true"><circle cx="1.8" cy="1.5" r="1.15"/><circle cx="5.9" cy="1.5" r="1.15"/><circle cx="10" cy="1.5" r="1.15"/></svg></button>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td></td>
+                <template x-for="c in level.columns" :key="c.key">
+                  <td :class="{left: c.type==='delivery', 'col-money': c.type==='money'}">
+                    <!-- delivery: follows the on/off toggle -->
+                    <template x-if="c.type==='delivery'"><span><i class="dot" :class="r.active && 'on'"></i><span x-text="r.active ? 'Active' : 'Off'"></span></span></template>
+                    <!-- money: ₹ value (optional hover chart icon) -->
+                    <template x-if="c.type==='money'"><div>
+                      <svg class="spent-chart hover-show" x-show="c.chartIcon" width="16" height="13" viewBox="0 0 16 13" fill="none" stroke="#1c2b33" stroke-width="1.4" aria-hidden="true"><rect x="1.6" y="7.6" width="2.7" height="4.7" rx=".8"/><rect x="6.6" y="1.6" width="2.7" height="10.7" rx=".8"/><rect x="11.6" y="4.6" width="2.7" height="7.7" rx=".8"/></svg>
+                      <span :class="r[c.key]==null ? 'dash' : isLink(r,c.key) && 'num-link'" x-text="r[c.key]==null ? '' : fmt(c, r[c.key])"></span>
+                    </div></template>
+                    <!-- number / ratio; empty values are drawn as Meta's short line -->
+                    <template x-if="c.type==='number' || c.type==='ratio'"><span :class="r[c.key]==null ? 'dash' : isLink(r,c.key) && 'num-link'" x-text="r[c.key]==null ? '' : fmt(c, r[c.key])"></span></template>
+                  </td>
+                </template>
+                <td></td>
+                <td class="filler"></td>
+              </tr>
+            </template>
+            <tr x-show="!rows.length" x-cloak>
+              <td :colspan="level.columns.length + 6" class="left !text-center py-10 text-[var(--muted)]" x-text="emptyText"></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td class="sticky-col bg-white" style="left:0"></td>
+              <td class="sticky-col bg-white" style="left:44px"></td>
+              <td class="left sticky-col bg-white name-edge" style="left:128px">
+                Results from <span x-text="footerCount"></span> <span x-text="footerUnit"></span>
+                <svg class="ft-info" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><circle cx="5.5" cy="5.5" r="5.5" fill="#283943"/><circle cx="5.5" cy="3" r=".8" fill="#fff"/><rect x="4.85" y="4.5" width="1.3" height="4.1" rx=".4" fill="#fff"/></svg>
+                <!-- shown on hover: "View results" reveals the totals, "Hide results" puts them away again -->
+                <button class="view-results" @click="resultsShown[tab]=!resultsShown[tab]">
+                  <svg width="12" height="9" viewBox="0 0 12 9" aria-hidden="true"><path fill="#080809" d="M6 0C3.3 0 1.2 1.8.2 3.9a1.4 1.4 0 0 0 0 1.2C1.2 7.2 3.3 9 6 9s4.8-1.8 5.8-3.9a1.4 1.4 0 0 0 0-1.2C10.8 1.8 8.7 0 6 0z"/><circle cx="6" cy="4.5" r="2.3" fill="#fff"/><circle cx="6" cy="4.5" r="1.1" fill="#080809"/><path x-show="showTotals" d="M1.2 .6 10.8 8.4" stroke="#fff" stroke-width="2.4"/><path x-show="showTotals" d="M1.2 .6 10.8 8.4" stroke="#080809" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  <span x-text="showTotals ? 'Hide results' : 'View results'">View results</span>
+                </button>
+              </td>
+              <td class="bg-white"></td>
+              <template x-for="c in level.columns" :key="c.key">
+                <td class="bg-white">
+                  <template x-if="showTotals && c.totalLabel">
+                    <div><span :class="c.totalLink && 'num-link'" x-text="fmt(c, totals[c.key])"></span>
+                    <span class="sub" x-text="c.totalLabel"></span></div>
+                  </template>
+                </td>
+              </template>
+              <td class="bg-white"></td>
+              <td class="bg-white"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div><div id="tblVbar" class="tbl-vbar"><i></i></div></div>
+      <div id="tblHbar" class="tbl-hbar"><i></i></div>
+    </section>
+    </div><!-- /main-panel -->
+
+    <!-- Floating assistant button -->
+    <button class="fab" title="Assistant">
+      <i class="sp sp-flower-xl"></i>
+      <span class="fab-dot"></span>
+    </button>
+  </main>
+
+  <!-- ===== Right dark rail ===== -->
+  <aside class="dark-rail">
+    <svg class="rail-ic" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#a4aaad" stroke-width="1.2" stroke-linejoin="round" aria-label="Charts"><rect x="2" y="8.3" width="2.8" height="4.1" rx=".5"/><rect x="6.8" y="2.7" width="3" height="9.7" rx=".5"/><rect x="11.4" y="5.7" width="3" height="6.7" rx=".5"/></svg>
+    <svg class="rail-ic" style="margin-top:22px" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#a4aaad" stroke-width="1.35" stroke-linejoin="round" aria-label="Edit"><g transform="translate(7.5 9.5) rotate(-45)"><path d="M-4.2 -1.3H7A1.3 1.3 0 0 1 7 1.3H-4.2L-6.8 0Z"/><path d="M4.2 -1.3V1.3"/></g></svg>
+    <svg class="rail-ic" style="margin-top:24px" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#a4aaad" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-label="History"><circle cx="8.2" cy="8.8" r="6.25"/><path d="M8.1 5.1V8.8L10.1 10.8"/></svg>
+  </aside>
+</div>
+
+<script>
+function gauge(score){
+  return {
+    score, shown:0, offset:47.12,
+    play(){
+      // reset to empty, then sweep to the score and count the number up
+      this.offset = 47.12; this.shown = 0;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        this.offset = (47.12 * (1 - this.score / 100)).toFixed(2);
+        const t0 = performance.now(), dur = 1000;
+        const step = now => {
+          const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+          this.shown = Math.round(this.score * e);
+          if (k < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }));
+    },
+  };
+}
+// Meta-style thin overlay scrollbars for the table (the native ones are hidden). Thumbs follow
+// the real scroll position and can be dragged.
+function tableBars(){
+  const sc = document.getElementById('tblScroll'), vb = document.getElementById('tblVbar'), hb = document.getElementById('tblHbar');
+  if (!sc || !vb || !hb) return;
+  const vt = vb.firstElementChild, ht = hb.firstElementChild;
+  const sync = () => {
+    const head = sc.querySelector('thead'), foot = sc.querySelector('tfoot');
+    const hH = head ? head.offsetHeight : 0, fH = foot ? foot.offsetHeight : 0;
+    const maxX = sc.scrollWidth - sc.clientWidth, maxY = sc.scrollHeight - sc.clientHeight;
+    ht.style.display = maxX > 0 ? 'block' : 'none';
+    if (maxX > 0){
+      const L = hb.clientWidth - 6, w = Math.max(30, L * sc.clientWidth / sc.scrollWidth);
+      ht.style.width = w + 'px'; ht.style.left = 3 + (L - w) * sc.scrollLeft / maxX + 'px';
+    }
+    vb.style.display = maxY > 0 ? 'block' : 'none';
+    if (maxY > 0){
+      const view = sc.clientHeight - hH - fH, L = view - 6, h = Math.max(30, L * view / (sc.scrollHeight - hH - fH));
+      vb.style.top = hH + 'px'; vb.style.height = view + 'px';
+      vt.style.height = h + 'px'; vt.style.top = 3 + (L - h) * sc.scrollTop / maxY + 'px';
+    }
+  };
+  const drag = (thumb, horizontal) => thumb.addEventListener('pointerdown', e => {
+    e.preventDefault(); thumb.setPointerCapture(e.pointerId);
+    const p0 = horizontal ? e.clientX : e.clientY, s0 = horizontal ? sc.scrollLeft : sc.scrollTop;
+    const room = horizontal ? hb.clientWidth - 6 - thumb.offsetWidth : vb.clientHeight - 6 - thumb.offsetHeight;
+    const max = horizontal ? sc.scrollWidth - sc.clientWidth : sc.scrollHeight - sc.clientHeight;
+    const move = ev => { const v = s0 + ((horizontal ? ev.clientX : ev.clientY) - p0) * max / Math.max(1, room);
+                         if (horizontal) sc.scrollLeft = v; else sc.scrollTop = v; };
+    thumb.addEventListener('pointermove', move);
+    thumb.addEventListener('pointerup', () => thumb.removeEventListener('pointermove', move), {once:true});
+  });
+  drag(ht, true); drag(vt, false);
+  sc.addEventListener('scroll', sync, {passive:true}); addEventListener('resize', sync);
+  new ResizeObserver(sync).observe(sc.querySelector('table')); sync();
+}
+document.addEventListener('DOMContentLoaded', tableBars);
+
+function dashboard(){
+  // Each tab reads its own JSON file. Change the data there — not here.
+  const FILES = { campaigns:'data/campaigns.json', adsets:'data/adsets.json', ads:'data/ads.json' };
+  const EMPTY = { title:'', unit:'', total:0, columns:[], rows:[] };
+  return {
+    view:'all', tab:'campaigns', query:'', dirty:false,
+    sortKey:null, sortDir:1,
+    lastUpdated:Date.now(), now:Date.now(),
+    loading:true, loadError:'',
+    levels:{ campaigns:EMPTY, adsets:EMPTY, ads:EMPTY },
+    sel:{ campaigns:[], adsets:[], ads:[] },          // checked rows, kept per tab
+    resultsShown:{ campaigns:false, adsets:false, ads:false }, // footer totals opened with "View results"
+    // tab icons: filled 20px when the tab is open, outline 16px otherwise
+    tabs:[
+      {id:'campaigns', name:'Campaigns',
+        svgOn:'<svg width="20" height="20" viewBox="2 2 44 44" fill="#0a78be" aria-hidden="true"><path d="M40.5 10H23.74c-1.08 0-2.03-.69-2.37-1.71s-.18-.53-.18-.53A5.496 5.496 0 0 0 15.970 4H6.5C4.02 4 2 6.02 2 8.5v30C2 41.53 4.47 44 7.5 44h33c3.03 0 5.5-2.47 5.5-5.5v-23c0-3.03-2.47-5.5-5.5-5.5zm-9.83 23.730c-.2.18-.46.27-.72.27-.17 0-.35-.04-.51-.13L24 30.98l-5.44 2.89c-.4.21-.89.15-1.230-.14a.98.98 0 0 1-.23-1.16l5.95-12c.17-.35.54-.57.95-.57s.77.22.95.57l5.95 12c.19.39.1.86-.23 1.160z"/></svg>',
+        svgOff:'<svg width="16" height="16" viewBox="2.3 3 42.67 42.67" aria-hidden="true"><path d="M40.5 11.5H23.74c-1.73 0-3.27-1.11-3.8-2.75l-.18-.53A4 4 0 0 0 15.97 5.5H6.5a3 3 0 0 0-3 3v30a4 4 0 0 0 4 4h33a4 4 0 0 0 4-4v-23a4 4 0 0 0-4-4z" fill="none" stroke="#1c2b33" stroke-width="2.8"/><path fill="#1c2b33" d="M30.67 33.73c-.2.18-.46.27-.72.27-.17 0-.35-.04-.51-.13L24 30.98l-5.44 2.89c-.4.21-.89.15-1.23-.14a.98.98 0 0 1-.23-1.16l5.95-12c.17-.35.54-.57.95-.57s.77.22.95.57l5.95 12c.19.39.1.86-.23 1.16z"/></svg>'},
+      {id:'adsets', name:'Ad sets',
+        svgOn:'<svg width="20" height="20" viewBox=".5 0 20 20" fill="#0a78be" aria-hidden="true"><rect width="9" height="9" rx="2"/><rect x="11" width="9" height="9" rx="2"/><rect y="11" width="9" height="9" rx="2"/><rect x="11" y="11" width="9" height="9" rx="2"/><circle cx="4.5" cy="4.5" r="1.75" fill="#fff"/><circle cx="15.5" cy="15.5" r="1.75" fill="#fff"/></svg>',
+        svgOff:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#000" aria-hidden="true"><rect x="-.1" y=".55" width="6.5" height="6.45" rx="1.5"/><rect x="8.8" y=".55" width="6.5" height="6.45" rx="1.5"/><rect x="-.1" y="9.45" width="6.5" height="6.55" rx="1.5"/><rect x="8.8" y="9.45" width="6.5" height="6.55" rx="1.5"/><circle cx="3.15" cy="3.75" r="1.35" fill="#000" stroke="none"/><circle cx="12.05" cy="12.7" r="1.35" fill="#000" stroke="none"/></svg>'},
+      {id:'ads', name:'Ads',
+        svgOn:'<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x=".5" y=".5" width="19" height="19" rx="3" fill="#0a78be"/><circle cx="5" cy="5.2" r="1.25" fill="#fff"/><path d="M9.4 5.2h7.3" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>',
+        svgOff:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#1c2b33" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="14.5" rx="2"/><circle cx="4.1" cy="4.2" r="1.1" fill="#1c2b33" stroke="none"/><path d="M6.9 4.2h6.6"/></svg>'},
+    ],
+    // view chips: fixed widths and icons measured from Meta
+    views:[
+      {id:'all',      label:'All ads',      w:83,  ico:'<svg viewBox="0 0 16 16" fill="currentColor"><path d="M.53 3.57Q.53 2.57 1.53 2.57H5.5L6.9 4H13.1Q14.1 4 14.1 5V12.67Q14.1 13.67 13.1 13.67H1.53Q.53 13.67 .53 12.67Z"/></svg>'},
+      {id:'delivery', label:'Had delivery', w:117, ico:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"><path d="M1.7 14V5.9Q1.7 5.2 2.3 4.8L6.9 1.85Q7.65 1.35 8.4 1.85L13.2 4.8Q13.8 5.2 13.8 5.9V14Z"/><path d="M1.9 6L5.9 9.1Q7.6 10.3 9.3 9.1L13.6 6"/></svg>'},
+      {id:'actions',  label:'Actions',      w:89,  ico:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"><path d="M3 13.2A6.2 6.2 0 1 1 11.8 13.2"/><path d="M7.4 11.4V5.9M4.7 8.5L7.4 5.8L10.1 8.5"/></svg>'},
+      {id:'active',   label:'Active ads',   w:105, ico:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"><path d="M12.9 2.75L1.4 6.5L6.8 8.6L8.7 14.3Z"/><path d="M12.9 2.75L6.8 8.6"/></svg>'},
+    ],
+
+    async init(){
+      setInterval(()=>{ this.now = Date.now(); }, 30000);
+      try {
+        const entries = await Promise.all(Object.entries(FILES).map(async ([k, url]) => {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(url + ' (' + res.status + ')');
+          return [k, await res.json()];
+        }));
+        this.levels = Object.fromEntries(entries);
+      } catch (e) {
+        this.loadError = location.protocol === 'file:'
+          ? 'Could not read the JSON files. Browsers block this when the page is opened by double-click. Open the folder with VS Code "Live Server" (or run: python -m http.server) and visit the page from there.'
+          : 'Could not load table data: ' + e.message;
+      }
+      this.loading = false;
+    },
+
+    // ---- current tab ----
+    get level(){ return this.levels[this.tab]; },
+    get selected(){ return this.sel[this.tab]; },
+    setTab(t){ this.tab = t; this.sortKey = null; this.sortDir = 1; },
+    levelLabel(id){
+      const plural = (n, w) => `${n} ${w}${n > 1 ? 's' : ''}`;
+      if (id === 'campaigns') return 'Campaigns';
+      if (id === 'adsets')
+        return this.sel.campaigns.length ? `Ad sets for ${plural(this.sel.campaigns.length, 'Campaign')}` : 'Ad sets';
+      if (this.sel.adsets.length)    return `Ads for ${plural(this.sel.adsets.length, 'Ad set')}`;
+      if (this.sel.campaigns.length) return `Ads for ${plural(this.sel.campaigns.length, 'Campaign')}`;
+      return 'Ads';
+    },
+
+    get updatedText(){
+      const m = Math.floor((this.now - this.lastUpdated) / 60000);
+      return m < 1 ? 'Updated just now' : `Updated ${m} min ago`;
+    },
+    // rows of the current tab, filtered by what is checked on the parent tab
+    get filteredByParent(){
+      let r = this.level.rows;
+      if (this.tab === 'adsets' && this.sel.campaigns.length)
+        r = r.filter(x => this.sel.campaigns.includes(x.campaignId));
+      if (this.tab === 'ads'){
+        if (this.sel.adsets.length) r = r.filter(x => this.sel.adsets.includes(x.adsetId));
+        else if (this.sel.campaigns.length) r = r.filter(x => this.sel.campaigns.includes(x.campaignId));
+      }
+      return r;
+    },
+    get rows(){
+      const q = this.query.trim().toLowerCase();
+      let r = this.filteredByParent.filter(x => x.name.toLowerCase().includes(q));
+      if (this.view === 'active') r = r.filter(x => x.active);
+      if (this.view === 'delivery') r = r.filter(x => x.spent > 0);
+      if (this.sortKey){
+        const k = this.sortKey, d = this.sortDir;
+        r = [...r].sort((a, b) => {
+          const av = a[k] ?? -1, bv = b[k] ?? -1;
+          return (typeof av === 'string' ? av.localeCompare(bv) : av - bv) * d;
+        });
+      }
+      return r;
+    },
+    // footer works on every row shown in this tab (after search, view and parent filters)
+    get footRows(){ return this.rows; },
+    get isFullList(){ return this.footRows.length === this.level.rows.length; },
+    // totals stay hidden until "View results" (shown on hover) is clicked; remembered per tab
+    get showTotals(){ return this.resultsShown[this.tab]; },
+    get footerCount(){ return this.isFullList ? this.level.total : this.footRows.length; },
+    get footerUnit(){ return this.footerCount === 1 ? this.level.title.toLowerCase() : this.level.unit; },
+    get emptyText(){
+      if (this.loading) return 'Loading…';
+      if (this.loadError) return this.loadError;
+      return `No ${this.level.unit} match your search.`;
+    },
+    isLink(r, key){ return (r.links || []).includes(key); },
+    // footer totals, recalculated whenever the ticked rows change. The file's totals are used for the
+    // whole list because reach there is de-duplicated across campaigns (people reached by more than one).
+    get totals(){
+      const r = this.footRows;
+      if (!r.length) return {};
+      if (this.isFullList && this.level.totals) return this.level.totals;
+      const sum = k => r.every(x => x[k] == null) ? null : r.reduce((t, x) => t + (x[k] || 0), 0);
+      const per = (a, b) => a != null && b ? a / b : null;
+      const out = {};
+      for (const c of this.level.columns) out[c.key] = sum(c.key);
+      // cost-per and ROAS come from the sums, not from adding up each row's own ratio
+      out.cpt = per(out.spent, sum('tickets'));
+      out.cpcp = per(out.spent, sum('purchases'));
+      out.roas = per(sum('pcv'), out.spent);
+      return out;
+    },
+    fmt(c, v){
+      if (v == null) return '—';
+      if (c.type === 'money') return this.inr(v);
+      if (c.type === 'ratio') return (Math.round(v * 100 + 1e-6) / 100).toFixed(2); // 6.24875 -> 6.25
+      return this.num(v);
+    },
+
+    get allChecked(){ return this.rows.length > 0 && this.rows.every(r => this.selected.includes(r.id)); },
+    toggleAll(on){ this.sel[this.tab] = on ? this.rows.map(r => r.id) : []; },
+    sort(k){ this.sortDir = this.sortKey === k ? -this.sortDir : 1; this.sortKey = k; },
+    refresh(){ this.lastUpdated = this.now = Date.now(); window.dispatchEvent(new CustomEvent('refresh-gauge')); },
+    deleteSelected(){
+      const ids = this.sel[this.tab];
+      if (!confirm(`Delete ${ids.length} ${this.level.unit}?`)) return;
+      this.level.rows = this.level.rows.filter(r => !ids.includes(r.id));
+      this.level.total -= ids.length;
+      this.level.totals = null; // file totals no longer apply; the footer adds up what is left
+      this.sel[this.tab] = [];
+    },
+    inr(n){ return new Intl.NumberFormat('en-IN', {style:'currency', currency:'INR', maximumFractionDigits:0}).format(n); },
+    num(n){ return new Intl.NumberFormat('en-IN').format(n); },
+    exportCsv(){
+      const esc = s => `"${String(s ?? '').replace(/"/g, '""')}"`;
+      const cols = this.level.columns;
+      const head = [this.level.title, 'Status', ...cols.map(c => c.label.replace(/<br>/g, ' '))];
+      const cell = (r, c) => c.type === 'delivery' ? (r.active ? 'Active' : 'Off') : r[c.key] ?? '';
+      const lines = this.rows.map(r => [esc(r.name), r.active ? 'On' : 'Off', ...cols.map(c => esc(cell(r, c)))].join(','));
+      const blob = new Blob([[head.map(esc).join(','), ...lines].join('\n')], {type:'text/csv'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = this.tab + '.csv'; a.click();
+      URL.revokeObjectURL(a.href);
+    },
+  };
+}
+</script>
+</body>
+</html>

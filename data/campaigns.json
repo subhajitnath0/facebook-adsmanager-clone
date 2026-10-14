@@ -1,0 +1,26 @@
+{
+  "level": "campaigns",
+  "title": "Campaign",
+  "unit": "campaigns",
+  "nameW": 311,
+  "total": 3,
+  "columns": [
+    { "key": "spent",     "type": "money",  "label": "Amount<br>spent",              "w": 106, "chartIcon": true, "totalLabel": "Total Spent" },
+    { "key": "reach",     "type": "number", "label": "Reach",                        "w": 96, "totalLabel": "Meta accounts", "totalLink": true },
+    { "key": "tickets",   "type": "number", "label": "Masterclass<br>tickets",       "w": 128, "totalLabel": "Total" },
+    { "key": "cpt",       "type": "money",  "label": "Cost per<br>ticket",           "w": 106, "totalLabel": "Per Action" },
+    { "key": "purchases", "type": "number", "label": "Course<br>purchases",          "w": 117, "totalLabel": "Total" },
+    { "key": "cpcp",      "type": "money",  "label": "Cost per<br>course purchase",  "w": 133, "totalLabel": "Per Action" },
+    { "key": "pcv",       "type": "money",  "label": "Purchases<br>conversion value","w": 137, "totalLabel": "Total" },
+    { "key": "roas",      "type": "ratio",  "label": "Purchase<br>ROAS",             "w": 110, "totalLabel": "Average" }
+  ],
+  "totals": { "spent": 51200, "reach": 93600, "tickets": 300, "cpt": 171, "purchases": 20, "cpcp": 2560, "pcv": 129680, "roas": 2.53 },
+  "rows": [
+    { "id": 1, "active": true, "name": "Masterclass ₹99", "desc": "New people · sales",
+      "spent": 42000, "reach": 93300, "tickets": 300, "cpt": 140, "purchases": 9, "cpcp": 4667, "pcv": 74691, "roas": 1.78 },
+    { "id": 2, "active": true, "name": "Course offer", "desc": "Retarget · registrants",
+      "spent": 6000, "reach": 940, "tickets": null, "cpt": null, "purchases": 7, "cpcp": 857, "pcv": 34993, "roas": 5.83 },
+    { "id": 3, "active": true, "name": "Deadline", "desc": "Retarget · checkouts",
+      "spent": 3200, "reach": 310, "tickets": null, "cpt": null, "purchases": 4, "cpcp": 800, "pcv": 19996, "roas": 6.25 }
+  ]
+}
