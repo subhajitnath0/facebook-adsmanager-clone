@@ -272,4 +272,21 @@ Edit the JSON files in `data/` and refresh. Rename rows, change numbers, add row
 
 ---
 
+## Author & contact
+
+**Subhajit Nath**, Software Engineer at **Procellence Technology** (India)
+
+Skills: JavaScript · TypeScript · Node.js · React · MongoDB · MySQL · REST APIs · Laravel · Ajax
+
+| | |
+|---|---|
+| GitHub | [@subhajitnath0](https://github.com/subhajitnath0) |
+| LinkedIn | [linkedin.com/in/subhajitnath](https://www.linkedin.com/in/subhajitnath/) |
+| Portfolio | [subhajitnath0.github.io/Personal_Portfolio_SbhajitNath](https://subhajitnath0.github.io/Personal_Portfolio_SbhajitNath/) |
+| Email | [subhajit851@gmail.com](mailto:subhajit851@gmail.com) |
+
+Questions, ideas or feedback are welcome: open an [issue](https://github.com/subhajitnath0/facebook-adsmanager-clone/issues) or reach out on LinkedIn.
+
+---
+
 *Built for learning. Not affiliated with Meta Platforms, Inc. Anyone who uses this code for an illegal or fraudulent purpose is solely responsible for it.*
