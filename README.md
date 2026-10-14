@@ -14,13 +14,21 @@ A pixel-matched clone of the **Meta (Facebook) Ads Manager** campaigns screen. I
 
 ## Preview
 
-| Campaigns | Campaigns, after "View results" |
-|---|---|
-| ![Campaigns tab](screenshots/campaigns.webp) | ![Footer totals shown](screenshots/campaigns-results.webp) |
+### Campaigns
 
-| Ad sets (row hovered) | Ads (row hovered) |
-|---|---|
-| ![Ad sets tab](screenshots/ad-sets.webp) | ![Ads tab](screenshots/ads.webp) |
+![Campaigns tab](screenshots/campaigns.webp)
+
+### Campaigns, after "View results" (footer totals)
+
+![Campaigns tab with the footer totals shown](screenshots/campaigns-results.webp)
+
+### Ad sets (row hovered: action pills and chart icon)
+
+![Ad sets tab](screenshots/ad-sets.webp)
+
+### Ads (row hovered, Delivery column)
+
+![Ads tab](screenshots/ads.webp)
 
 ---
 
