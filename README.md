@@ -9,6 +9,10 @@ A pixel-matched clone of the **Meta (Facebook) Ads Manager** campaigns screen. I
 > "Facebook", "Meta" and "Ads Manager" are trademarks of Meta Platforms, Inc.
 > All data on screen is **fictional sample data**: the campaign names, the numbers, and the account "Qynto" with its ID.
 > It does not connect to any real ad account, and it must not be used to impersonate Meta or to collect anyone's information.
+>
+> **You are fully responsible for how you use this project.** It is provided "as is", without any warranty.
+> If anyone uses this code for an illegal, fraudulent or misleading purpose (for example phishing, scams or pretending to be Meta),
+> that person alone is responsible for it. The author accepts no liability for any misuse.
 
 ---
 
@@ -268,4 +272,4 @@ Edit the JSON files in `data/` and refresh. Rename rows, change numbers, add row
 
 ---
 
-*Built for learning. Not affiliated with Meta Platforms, Inc.*
+*Built for learning. Not affiliated with Meta Platforms, Inc. Anyone who uses this code for an illegal or fraudulent purpose is solely responsible for it.*
