@@ -68,13 +68,13 @@
   .topbar{height:54px;padding:0 7px 0 12px;display:flex;align-items:center;flex-shrink:0}
   .topbar h1{font-size:17px;font-weight:600;line-height:22px;color:#1c2b33;white-space:nowrap;position:relative;top:-1px;margin:0}
   .acct{display:flex;align-items:center;gap:7px;width:271px;height:35px;margin:3px 0 0 10px;padding:0 13px 0 11px;flex-shrink:0;border:1px solid #d1d8de;border-radius:4px;background:#fff;font-size:14px;color:#1c2b33;cursor:pointer}
-  .acct-q{width:21px;height:21px;border-radius:3px;background:#ffab6f;color:#a2401f;font-size:13px;font-weight:600;line-height:1;display:grid;place-items:center;flex-shrink:0;padding-top:2px;box-shadow:inset 0 1px 0 #d1cdcc}
+  .acct-q{width:21px;height:21px;border-radius:3px;background:#ffab6f;color:#a2401f;font-size:13px;font-weight:700;line-height:1;display:grid;place-items:center;flex-shrink:0;padding:0 0 1px;box-shadow:inset 0 1px 0 #d1cdcc,inset 1px 0 0 #dec3b1}
   .acct-div{width:1px;height:21px;background:#d7dde3;flex-shrink:0}
   .acct-ic{width:22px;height:22px;border-radius:50%;background:#f1f4f7;display:grid;place-items:center;flex-shrink:0}
   .acct-ic svg{display:block}
   .acct-name{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-align:left;position:relative;top:-1px}
   .topbar .caret{display:block;flex-shrink:0}
-  .opp{display:flex;align-items:center;margin:3px 0 0 18px;font-size:13px;color:#1c2b33;cursor:pointer;white-space:nowrap}
+  .opp{display:flex;align-items:center;margin:1px 0 0 18px;font-size:13px;color:#1c2b33;cursor:pointer;white-space:nowrap}
   .opp .caret{position:relative;top:-1px}
   .opp-label{margin:0 10px 0 8px}
   .tb-right{margin-left:auto;display:flex;align-items:center}
@@ -87,12 +87,13 @@
   .tb-avatar{display:block;width:34px;height:34px;margin-left:7px;flex-shrink:0}
 
   /* Main panel: one bordered card holding the view chips, search, level tabs and the table */
-  .main-panel{flex:1;min-height:0;display:flex;flex-direction:column;background:#f1f4f7;border:1px solid #dbdee1;border-left-color:#e8ebee;border-right-color:#e8ebee;border-bottom-color:#dadee1;border-radius:6px 6px 8px 8px;box-shadow:-1px 0 0 rgba(0,0,0,.035),1px 0 0 rgba(0,0,0,.035)}
+  .main-panel{flex:1;min-height:0;display:flex;flex-direction:column;background:#f1f4f7;border:1px solid #dbdee1;border-left-color:#e8ebee;border-right-color:#d9dee3;border-bottom-color:#dadee1;border-radius:6px 6px 8px 8px;box-shadow:-1px 0 0 rgba(0,0,0,.035),1px 0 0 rgba(0,0,0,.035)}
   .views-card{display:flex;flex-direction:column;gap:7px;padding:7px 10px 0;margin-bottom:7px}
   .views-row{display:flex;align-items:center;gap:7px;height:38px}
   .chip{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;height:38px;padding:0 11px 4px;border:1px solid #d0d6dd;border-radius:4px;background:#fff;font-size:13px;font-weight:400;color:#1c2b33;white-space:nowrap;cursor:pointer;transition:background .15s}
   .chip:not(.on):not(.see-more):hover{background:#c3dcf5}
-  .chip.on{border-color:#4699ce;border-right-color:#2989c6;color:#0a78be;font-weight:600}
+  .chip.on{border-color:#4699ce;border-right-color:#2989c6;color:#0a78be;font-size:12px;font-weight:700}
+  .chip.on .chip-label{position:relative;top:-1px}
   .chip-ic{display:block;flex-shrink:0;width:16px;height:16px}
   .chip-ic svg{display:block;width:16px;height:16px}
   .chip.see-more{gap:8px;padding-bottom:3px;border-color:transparent;background:transparent}
@@ -166,15 +167,16 @@
   /* Row hover actions */
   /* name cell: thumb, name line, then hover pills laid over the lower half of the row */
   .name-wrap{display:flex;align-items:flex-start;height:41.5px}
-  .name-col{position:relative;min-width:0;flex:1;padding:3px 0 0 10px}
+  .name-col{position:relative;min-width:0;flex:1;padding:3px 0 0 8px}
   .thumb + .name-col{padding-left:0;margin-left:7.5px}
-  .name-pencil{flex-shrink:0;margin:-2.4px 0 0 4px}
+  .name-pencil{flex-shrink:0;margin:-2.4px 0 0 2px}
   .hover-show{display:none}
   tr:hover .hover-show{display:block}
   td.col-money{position:relative}
   .spent-chart{position:absolute;left:13.8px;top:11.6px}
-  .dash{display:inline-block;width:12px;height:1px;background:#1c2b33;vertical-align:4px} /* Meta draws empty values as a short line */
-  .row-actions{display:none;position:absolute;left:-1px;top:22px;gap:4px}
+  .dash{display:inline-block;width:11px;height:1px;background:#1c2b33;vertical-align:2px} /* Meta draws empty values as a short line */
+  .row-actions{display:none;position:absolute;left:7px;top:22px;gap:4px}
+  .thumb + .name-col .row-actions{left:-1px}
   tr:hover .row-actions{display:flex}
   tr:hover .row-desc{display:none}
   .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#9e9c94;margin-right:7px;vertical-align:1px}
@@ -191,7 +193,7 @@
   .score-gauge{position:relative;width:28px;height:28px;display:inline-grid;place-items:center}
   .score-gauge svg{position:absolute;inset:0}
   .gauge-val{transition:stroke-dashoffset 1s cubic-bezier(.2,.7,.2,1)}
-  .score-gauge b{position:relative;font-size:11px;font-weight:700;color:var(--ink);line-height:1}
+  .score-gauge b{position:relative;top:-1px;font-size:11px;font-weight:700;color:var(--ink);line-height:1}
 
   /* Floating help button */
   .fab{position:absolute;z-index:30;right:19px;bottom:30px;width:52px;height:52px;padding:0;border-radius:50%;background:#fff;border:1px solid #d1d7dd;box-shadow:0 2px 8px rgba(0,0,0,.09);display:grid;place-items:center}
@@ -209,10 +211,12 @@
   .tbl-hbar>i{top:3px;height:5px;display:none}
   tfoot td{position:sticky;bottom:0;z-index:2;background:#fff;border-top:1px solid #e4e4e5;border-bottom:1px solid #f6f6f6;height:69px;padding-top:6px;vertical-align:top}
   tfoot td::before{content:"";position:absolute;left:0;right:0;top:-3px;height:2px;background:linear-gradient(rgba(0,0,0,.005),rgba(0,0,0,.045));pointer-events:none}
-  .ft-info{display:inline-block;vertical-align:0;margin-left:2px}
+  .ft-info{display:inline-block;vertical-align:0;margin-left:0}
+  tfoot td.name-edge{padding-left:11px;font-size:13.25px}
+  tfoot td:not(.name-edge){border-right:0;padding-right:8px} /* keeps the top border continuous across columns */
   tfoot td.sticky-col{z-index:4}
   /* "View results": appears while the footer is hovered, reveals the totals when clicked */
-  .view-results{display:flex;align-items:center;gap:4px;margin:-1px 0 0 -1px;padding:0;font-size:11px;line-height:16.5px;color:#1c1e21;visibility:hidden;cursor:pointer}
+  .view-results{display:flex;align-items:center;gap:4px;margin:1px 0 0 -1px;padding:0;font-size:11.4px;line-height:16.5px;color:#1c1e21;visibility:hidden;cursor:pointer}
   .view-results svg{display:block;flex-shrink:0;margin-top:1px}
   .view-results:hover{text-decoration:underline}
   tfoot tr:hover .view-results{visibility:visible}
@@ -491,13 +495,13 @@
           <thead>
             <tr>
               <th class="sticky-col" style="left:0;width:44px"><input type="checkbox" class="cb" :checked="allChecked" @change="toggleAll($event.target.checked)"></th>
-              <th class="sticky-col" style="left:44px;width:84px" title="Off/On"><div class="th-inner"><span class="th-label two">Off...</span><svg class="sort-ic" viewBox="0 0 16 16" fill="none" stroke="#1c2b33" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 2v8.7M1.8 4.7 4.5 2l2.7 2.7M11.2 3.8V12M8.5 9.3l2.7 2.7 2.7-2.7"/></svg><span style="flex:0 0 5px"></span></div></th>
-              <th class="sticky-col name-edge" :style="'left:128px;width:' + (level.nameW || 311) + 'px'"><div class="th-inner"><button class="th-label" @click="sort('name')" x-text="level.title"></button><svg class="sort-ic" viewBox="0 0 16 16" fill="none" stroke="#1c2b33" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 2v8.7M1.8 4.7 4.5 2l2.7 2.7M11.2 3.8V12M8.5 9.3l2.7 2.7 2.7-2.7"/></svg><svg class="th-caret" width="7" height="5" viewBox="0 0 7 5" aria-hidden="true"><path d="M0 .6h7L3.5 4.6z" fill="#1c2b33"/></svg></div></th>
-              <th style="width:31px;padding:0 8px 0 0"><div class="th-inner"><svg class="th-caret" width="7" height="5" viewBox="0 0 7 5" aria-hidden="true"><path d="M0 .6h7L3.5 4.6z" fill="#1c2b33"/></svg></div></th>
+              <th class="sticky-col" style="left:44px;width:84px" title="Off/On"><div class="th-inner"><span class="th-label two" style="letter-spacing:.3px">Off...</span><svg class="sort-ic" viewBox="0 0 16 16" fill="none" stroke="#1c2b33" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 2v8.7M1.8 4.7 4.5 2l2.7 2.7M11.2 3.8V12M8.5 9.3l2.7 2.7 2.7-2.7"/></svg><span style="flex:0 0 5px"></span></div></th>
+              <th class="sticky-col name-edge" :style="'left:128px;width:' + (level.nameW || 311) + 'px'"><div class="th-inner"><button class="th-label" @click="sort('name')" x-text="level.title"></button><svg class="sort-ic" viewBox="0 0 16 16" fill="none" stroke="#1c2b33" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 2v8.7M1.8 4.7 4.5 2l2.7 2.7M11.2 3.8V12M8.5 9.3l2.7 2.7 2.7-2.7"/></svg><svg class="th-caret" width="7" height="5" viewBox="0 0 7 5" aria-hidden="true"><path d="M0 0h7L3.5 4z" fill="#1c2b33"/></svg></div></th>
+              <th style="width:31px;padding:0 6px 0 0"><div class="th-inner"><svg class="th-caret" width="7" height="5" viewBox="0 0 7 5" aria-hidden="true"><path d="M0 0h7L3.5 4z" fill="#1c2b33"/></svg></div></th>
               <template x-for="c in level.columns" :key="c.key">
                 <th :style="'width:' + c.w + 'px'"><div class="th-inner">
                   <button class="th-label" :class="c.label.includes('<br>') && 'two'" @click="sort(c.key)"><span class="th-main" x-html="c.label"></span><span class="th-sub" x-show="c.sub" x-text="c.sub"></span></button>
-                  <svg class="sort-ic" x-show="!c.sub" viewBox="0 0 16 16" fill="none" stroke="#1c2b33" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 2v8.7M1.8 4.7 4.5 2l2.7 2.7M11.2 3.8V12M8.5 9.3l2.7 2.7 2.7-2.7"/></svg><svg class="th-caret" width="7" height="5" viewBox="0 0 7 5" aria-hidden="true"><path d="M0 .6h7L3.5 4.6z" fill="#1c2b33"/></svg>
+                  <svg class="sort-ic" x-show="!c.sub" viewBox="0 0 16 16" fill="none" stroke="#1c2b33" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 2v8.7M1.8 4.7 4.5 2l2.7 2.7M11.2 3.8V12M8.5 9.3l2.7 2.7 2.7-2.7"/></svg><svg class="th-caret" width="7" height="5" viewBox="0 0 7 5" aria-hidden="true"><path d="M0 0h7L3.5 4z" fill="#1c2b33"/></svg>
                 </div></th>
               </template>
               <th style="width:28px"><svg width="12" height="12" viewBox="0 0 12 12" style="display:block;margin:0 auto" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#bec4c6"/><path d="M6 3.4v5.2M3.4 6h5.2" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg></th>
@@ -523,7 +527,7 @@
                       </div>
                       <span class="sub row-desc truncate" x-show="r.desc" x-text="r.desc"></span>
                       <div class="row-actions">
-                        <button class="row-action" style="width:57px"><svg width="11" height="10" viewBox="0 0 11 10" fill="#283943" aria-hidden="true"><rect x="0" y="5.2" width="3.4" height="4.8" rx=".5"/><rect x="3.8" y="0" width="3.4" height="10" rx=".5"/><rect x="7.6" y="2" width="3.4" height="8" rx=".5"/></svg>Charts</button>
+                        <button class="row-action" style="width:57px"><svg width="11" height="8" viewBox="0 0 11 8" fill="#283943" aria-hidden="true"><rect x="0" y="4" width="3.4" height="4" rx=".5"/><rect x="3.8" y="0" width="3.4" height="8" rx=".5"/><rect x="7.6" y="2" width="3.4" height="6" rx=".5"/></svg>Charts</button>
                         <button class="row-action" style="width:44px"><svg width="11" height="11" viewBox="0 0 11 11" fill="#283943" aria-hidden="true"><path d="M.6 10.4l.5-2.3 5.3-5.3 1.8 1.8-5.3 5.3z"/><path d="M7.3 2.1l1-1a1.1 1.1 0 0 1 1.6 0l.2.2a1.1 1.1 0 0 1 0 1.6l-1 1z"/></svg>Edit</button>
                         <button class="row-action" style="width:71px"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1.1" y=".7" width="7.3" height="9.1" rx="1.2" fill="#283943"/><path d="M3.3 3.6h3M3.3 5.7h2" stroke="#fff" stroke-width="1"/><path d="M10.4 3.6v6.2a1.6 1.6 0 0 1-1.6 1.6H3.4" fill="none" stroke="#283943" stroke-width="1"/></svg>Duplicate</button>
                         <button class="row-action" style="width:69px" x-show="tab!=='ads'"><svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true"><rect x="1.5" y="2.2" width="9.8" height="9.6" rx="1.6" fill="#283943"/><path d="M1.8 8.9 4.3 6.6 5.7 8.1 8.3 5.6" fill="none" stroke="#fff" stroke-width="1.1" stroke-linejoin="round"/><path d="M6.6 4.7h2.8v2.8z" fill="#fff"/></svg>Compare</button>
