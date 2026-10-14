@@ -107,10 +107,10 @@
   .create-view{display:inline-flex;align-items:center;justify-content:center;width:107px;height:38px;padding:0;border:0;border-radius:4px;background:#0a78be;color:#fff;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer}
   .view-settings{display:grid;place-items:center;width:36px;height:38px;padding:0;border:1px solid #bbc4ce;border-radius:4px;background:transparent;color:#1c2b33;cursor:pointer}
   /* search box with Meta's faint multicolour glow */
-  .ai-search{position:relative;isolation:isolate}
-  .ai-search::before{content:"";position:absolute;inset:-3px;z-index:-1;border-radius:7px;pointer-events:none;filter:blur(9px);opacity:.062;background:linear-gradient(90deg,#207dbb 0%,#207dbb 8%,#207d80 14%,#3e7d44 24%,#3e7d44 30%,#5c7d44 34%,#7a7d44 38%,#975f62 42%,#b55f62 46%,#b54180 51%,#b54180 59%,#97239d 64%,#97239d 67%,#5c239d 71%,#5c23bb 76%,#5c23d9 81%,#3e23d9 88%,#3e23d9 100%)}
-  .ai-search input{display:block;width:100%;height:32px;padding:0 15px 2px;border:0;border-radius:4px;background:#fff;font-size:13px;color:#1c2b33;outline:none}
-  .ai-search input::placeholder{color:#6a7a85;opacity:1}
+  .search-box{position:relative;isolation:isolate}
+  .search-box::before{content:"";position:absolute;inset:-3px;z-index:-1;border-radius:7px;pointer-events:none;filter:blur(9px);opacity:.062;background:linear-gradient(90deg,#207dbb 0%,#207dbb 8%,#207d80 14%,#3e7d44 24%,#3e7d44 30%,#5c7d44 34%,#7a7d44 38%,#975f62 42%,#b55f62 46%,#b54180 51%,#b54180 59%,#97239d 64%,#97239d 67%,#5c239d 71%,#5c23bb 76%,#5c23d9 81%,#3e23d9 88%,#3e23d9 100%)}
+  .search-box input{display:block;width:100%;height:32px;padding:0 15px 2px;border:0;border-radius:4px;background:#fff;font-size:13px;color:#1c2b33;outline:none}
+  .search-box input::placeholder{color:#6a7a85;opacity:1}
 
   /* Level tabs: active tab is taller and white, joined to the table by a 1px line */
   .tabs-row{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:0 10px}
@@ -199,7 +199,7 @@
   .gauge-val{transition:stroke-dashoffset 1s cubic-bezier(.2,.7,.2,1)}
   .score-gauge b{position:relative;font-size:11px;font-weight:700;color:var(--ink);line-height:1}
 
-  /* Floating assistant button */
+  /* Floating help button */
   .fab{position:absolute;z-index:30;right:19px;bottom:30px;width:52px;height:52px;padding:0;border-radius:50%;background:#fff;border:1px solid #d1d7dd;box-shadow:0 2px 8px rgba(0,0,0,.09);display:grid;place-items:center}
   .fab .sp{--s:30;transform:translateX(1px)}
   .fab-dot{position:absolute;top:-4px;right:-5px;width:7px;height:7px;border-radius:50%;background:#dd2334}
@@ -440,7 +440,7 @@
           <button class="view-settings" title="View settings"><svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M4.9 3.1h7.8M.6 8.15h7.8"/><circle cx="2.9" cy="2.9" r="2"/><circle cx="10.45" cy="8.3" r="2"/></svg></button>
         </div>
       </div>
-      <div class="ai-search"><input x-model="query" placeholder="Describe what you're looking for" /></div>
+      <div class="search-box"><input x-model="query" placeholder="Describe what you're looking for" /></div>
     </section>
 
     <!-- Tabs + date range -->
@@ -593,8 +593,8 @@
     </section>
     </div><!-- /main-panel -->
 
-    <!-- Floating assistant button -->
-    <button class="fab" title="Assistant">
+    <!-- Floating help button -->
+    <button class="fab" title="Help">
       <i class="sp sp-flower-xl"></i>
       <span class="fab-dot"></span>
     </button>
