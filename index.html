@@ -108,7 +108,7 @@
 
   /* Level tabs: active tab is taller and white, joined to the table by a 1px line */
   .tabs-row{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:0 10px}
-  .tab{display:flex;align-items:center;gap:8px;flex:none;min-width:219px;height:37px;padding:0 12px 2px;border-radius:8px 8px 0 0;font-size:15px;font-weight:600;line-height:20px;color:#1c2b33;background:#f1f4f7;border:none;box-shadow:0 1px 3px 2px rgba(0,0,0,.06);cursor:pointer;white-space:nowrap}
+  .tab{display:flex;align-items:center;gap:8px;flex:none;min-width:219px;height:37px;padding:0 12px 2px;border-radius:8px 8px 0 0;font-size:15px;font-weight:600;line-height:20px;color:#1c2b33;background:#f1f4f7;border:none;box-shadow:0 1px 3px 2px rgba(0,0,0,.06);clip-path:inset(-8px -8px 0 -8px);cursor:pointer;white-space:nowrap} /* clip: no shadow onto the table card */
   .tab.on{height:40px;padding-bottom:3px;background:#fff;color:#0a78be;position:relative;z-index:1;box-shadow:0 1px 0 #d1d8de,0 1px 3px 2px rgba(0,0,0,.06);clip-path:inset(-8px -8px -1px -8px)}
   .tab .tic{display:flex;flex-shrink:0;margin-top:2px}
   .tab .tic svg{display:block;overflow:visible}
