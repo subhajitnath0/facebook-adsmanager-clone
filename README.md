@@ -83,7 +83,6 @@ Libraries (loaded from CDNs, so there's nothing to install):
 | [Tailwind CSS](https://tailwindcss.com/) (Play CDN) | A few layout utility classes (`flex`, `ml-auto`, `min-w-0`…) |
 | [Alpine.js](https://alpinejs.dev/) 3.14 | Reactivity: tabs, selection, search, sorting, toggles, totals |
 | Google Fonts: Roboto | Column header labels (Meta uses a Roboto-like face there) |
-| Google Fonts: Material Symbols | Two small glyphs (the delete and close icons) |
 
 ---
 
@@ -233,7 +232,7 @@ In plain words: **scale the whole sheet, then slide it left and up** so only the
 - **A sprite only pays off when you use most of it.** During pixel-matching, most icons here were redrawn as **inline SVG** for exact shapes and colours. The page now uses only a few icons from the sprite, so this 147 KB sheet is bigger than needed. The fix is to rebuild a small sheet that contains only the icons in use.
 - **HTTP/2 and HTTP/3** can send many files over one connection at the same time, so the "fewer requests" win is smaller than it used to be. Caching and compression still help.
 - **Inline SVG** is often the best choice for UI icons: no request at all, sharp at any size, and recolourable with CSS (`currentColor`).
-- **Icon fonts** (like Material Symbols) are convenient but download a whole font for a few glyphs. That's why they're kept to a minimum here.
+- **Icon fonts** (like Material Symbols) are convenient but download a whole font for a few glyphs. An earlier version loaded Material Symbols for just two icons (delete and close); replacing them with inline SVG removed that download completely.
 - **WebP** was used for the sprite and screenshots because it is usually much smaller than PNG at the same quality.
 
 ---
